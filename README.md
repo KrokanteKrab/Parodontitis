@@ -1,5 +1,8 @@
 # Parodontitis
-Project for the minor AI for InHolland.
+Made for InHolland by Krokante Krab 🦀 (2022/2023) as part of the minor AI.
 
-## Requirements
-https://learnpython.com/blog/python-requirements-file/
+## Installation
+The following installation is required to get everything working!
+```
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu117
+```
