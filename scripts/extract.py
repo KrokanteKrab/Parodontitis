@@ -43,6 +43,7 @@ def convert_xml_to_dataframe(path='../data/patients.xml'):
     ])
 
     # TODO: Temporary way to add labels
-    df['HAS_PARODONTITIS'] = [True, False, False, True, True]
+    # df['HAS_PARODONTITIS'] = [True, False, False, True, True]
+    df['HAS_PARODONTITIS'] = [1]
 
     return df
