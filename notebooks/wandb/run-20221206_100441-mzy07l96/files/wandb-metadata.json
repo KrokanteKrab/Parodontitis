@@ -1,0 +1,49 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.10.8",
+    "heartbeatAt": "2022-12-06T09:04:42.009059",
+    "startedAt": "2022-12-06T09:04:41.099611",
+    "docker": null,
+    "cuda": null,
+    "args": null,
+    "state": "running",
+    "program": "notebooks/main.ipynb",
+    "root": "C:/Users/Tim/Documents/Avans/P4.2/Project/Parodontitis",
+    "git": {
+        "remote": "https://github.com/KrokanteKrab/Parodontitis.git",
+        "commit": "288b61ecc11ef0b38b16c24ab85f522962ebd7fc"
+    },
+    "email": "te.vandenenden@student.avans.nl",
+    "host": "t1minc001",
+    "username": "Tim",
+    "executable": "C:\\Users\\Tim\\anaconda3\\envs\\parodontitis\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 3401.0,
+        "min": 0.0,
+        "max": 3401.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3401.0,
+            "min": 0.0,
+            "max": 3401.0
+        }
+    ],
+    "disk": {
+        "total": 476.23437118530273,
+        "used": 230.48953247070312
+    },
+    "gpu": "NVIDIA GeForce RTX 3060 Ti",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3060 Ti",
+            "memory_total": 8589934592
+        }
+    ],
+    "memory": {
+        "total": 31.907974243164062
+    }
+}
