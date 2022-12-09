@@ -1,21 +1,25 @@
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Template from "./pages/_shared/template";
+
+// Error(s)
+import PageNotFound from "./pages/_errors/page-not-found";
+
+// Page(s)
+import Home from "./pages/home";
+
 function App() {
     return (
-    <div className="App">
-        <header className="App-header">
-            <p>
-                Edit <code>src/App.js</code> and save to reload.
-            </p>
-            <a
-                className="App-link"
-                href="https://reactjs.org"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                Learn React
-            </a>
-        </header>
-    </div>
-  );
+        <>
+            <Router>
+                <Template>
+                    <Routes>
+                        <Route exact path="/" element={<Home/>}/>
+                        <Route path="*" element={<PageNotFound/>}/>
+                    </Routes>
+                </Template>
+            </Router>
+        </>
+    );
 }
 
 export default App;
