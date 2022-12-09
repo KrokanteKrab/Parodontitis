@@ -47,3 +47,32 @@ footer {
     font-weight: bold;
     color: rgb(0 0 0 / 22%);
 }
+
+.dropzone {
+    width: 100%;
+    background: #eee;
+    border: 2px dashed #333;
+    border-radius: 5px;
+    padding: 20px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.dropzone-icon {
+    display: block;
+    font-size: 75px;
+    margin: 20px;
+    opacity: 0.3;
+}
+
+.dropzone-text {
+    margin-bottom: 20px;
+    font-weight: bold;
+    opacity: 0.6;
+}
+
+#dropzone-input {
+    display: none;
+}

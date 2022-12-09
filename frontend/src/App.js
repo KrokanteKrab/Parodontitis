@@ -6,6 +6,7 @@ import PageNotFound from "./pages/_errors/page-not-found";
 
 // Page(s)
 import Home from "./pages/home";
+import Predict from "./pages/predict";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Template>
                     <Routes>
                         <Route exact path="/" element={<Home/>}/>
+                        <Route exact path="/predict" element={<Predict/>}/>
                         <Route path="*" element={<PageNotFound/>}/>
                     </Routes>
                 </Template>
