@@ -13,6 +13,7 @@ from flask import Flask, request, jsonify
 from keras.models import load_model
 from io import BytesIO
 from flask_cors import CORS
+from sklearn.model_selection import train_test_split
 
 import matplotlib
 matplotlib.use('Agg')
@@ -27,15 +28,7 @@ EXPECTED = {
   # TODO: Define constraints on data if needed
 }
 
-
-# This method is used for loading the needed data.
-def load_data():
-    # Fetch data from csv file.
-    # TODO: fetch data from csv
-    data = pd.read_csv('', sep=";")
-
-    # Only take the needed column(s)
-    df = data[[
+COLUMNS = [
         # 'PATIENT_ID',
         # 'GENDER_MALE',
         # 'GENDER_FEMALE',
@@ -57,33 +50,37 @@ def load_data():
         'HAS_PARODONTITIS',
         # 'NOICE_MODIFIED',
         # 'STUDENT_ERROR'
+    ]
+RANDOM_STATE = 1
+
+
+# This method is used for loading the needed data.
+def load_data():
+    # Fetch data from csv file.
+    data = pd.read_csv('../python/data/patients-v5.csv')
+
+    # Only take the needed column(s)
+    X = data[COLUMNS]
+
+    y = data[[
+        'TRUE_HAS_PARODONTITIS'
     ]]
 
-    # Creating train and test sets
-    train_dataset = df.sample(frac=0.7, random_state=0)
-    test_dataset = df.drop(train_dataset.index)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=RANDOM_STATE)
 
-    # Separate the value that we want to predict (label)
-    train_features = train_dataset.copy()
-    test_features = test_dataset.copy()
-
-    train_labels = train_features.pop('HAS_PARODONTITIS')
-    test_labels = test_features.pop('HAS_PARODONTITIS')
-
-    return (train_labels, train_features), (test_labels, test_features)
+    return (X_train, X_test), (y_train, y_test)
 
 
 # The setup method is used for setting everything up that we need to work with
 def setup():
     # Load neural network
-    # TODO: Get model from wandb or from a directory
-    _model = load_model("./exported-h5/model_20221013182825.h5")
+    _model = load_model("./model/model-best.h5")
 
     # Load training data
-    (_, train_features), _ = load_data()
+    (X_train, _), _ = load_data()
 
     # Load SHAP (Explain ability AI)
-    _shap_explainer = shap.KernelExplainer(_model, train_features[:100])
+    _shap_explainer = shap.KernelExplainer(_model, X_train[:100])
 
     return _model, _shap_explainer
 
@@ -95,38 +92,31 @@ def predict():
     content = request.json
     errors = []
 
-    # TODO: Validate for errors using EXPECTED constraints
-
     if len(errors) < 1:
         # Predict
-        x = np.zeros((1, 9))
+        x = np.zeros((1, 14))
 
-        x[0, 0] = content['TREATING_PROVIDER_DENTIST']
-        x[0, 1] = content['TREATING_PROVIDER_FACULTY']
-        x[0, 2] = content['TREATING_PROVIDER_STUDENT']
-        x[0, 3] = content['PROCEDURE_A']
-        x[0, 4] = content['PROCEDURE_B']
-        x[0, 5] = content['BLEEDING_ON_PROBING']
-        x[0, 6] = content['NR_OF_POCKET']
-        x[0, 7] = content['NR_OF_FURCATION']
-        x[0, 8] = content['NR_OF_MOBILITY']
-        x[0, 9] = content['TOTAL_LOSS_OF_ATTACHMENT_LEVEL']
+        for i in range(len(COLUMNS)):
+            x[0, i] = content[COLUMNS[i]]
 
         # Prediction
         prediction = model.predict(x)
-        volume = float(prediction[0])
+        prediction = {
+            "has-not-parodontitis": float(prediction[0][0]),
+            "has-parodontitis": float(prediction[0][1])
+        }
 
-        # Explanation
         shap_values = shap_explainer.shap_values(x)
-        shap_plot = shap.force_plot(
-            shap_explainer.expected_value,
-            shap_values[0],
-            x,
-            matplotlib=True,
-            feature_names=[],# TODO define feature names
-            show=False,
-            plot_cmap=['#77dd77', '#f99191']
-        )
+        if prediction["has-not-parodontitis"] > prediction["has-parodontitis"]:
+            shap.force_plot(
+                shap_explainer.expected_value[0], shap_values[0], x, matplotlib=True, show=False,
+                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
+            )
+        else:
+            shap.force_plot(
+                shap_explainer.expected_value[1], shap_values[1], x, matplotlib=True, show=False,
+                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
+            )
 
         # Encode shap img into base64,
         buf = BytesIO()
@@ -136,9 +126,9 @@ def predict():
         # Request response
         response = {
             "id": str(uuid.uuid4()),
-            "volume": volume,
             "shap-img": shap_img,
-            "errors": errors
+            "errors": errors,
+            "prediction": prediction
         }
     else:
         # Return errors

@@ -1,7 +1,8 @@
 Flask==2.2.2
 flask_cors==3.0.10
-keras==2.10.0
-matplotlib==3.6.1
-numpy==1.23.3
+keras==2.11.0
+matplotlib==3.6.2
+numpy==1.23.5
 pandas==1.5.2
 shap==0.41.0
+scikit-learn==1.2.0
