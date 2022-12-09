@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import denitist from "./_shared/_images/dentist-with-patient-v2.png";
 
 function Home() {
@@ -11,9 +12,9 @@ function Home() {
                     basis van data uit het elektronisch patiëntendossier (EPD).
                     Hierbij wordt gebruik gemaakt van machine learning.
                 </p>
-                <button type="button" className="btn btn-primary nunito">
+                <Link to="/predict" className="btn btn-primary nunito">
                     Ga naar de tool <i className="fa-solid fa-arrow-right"/>
-                </button>
+                </Link>
             </div>
             <div className="col-12 col-md-5">
                 <img src={denitist} alt="" height="75%"/>
