@@ -16,8 +16,11 @@ from flask_cors import CORS
 from sklearn.model_selection import train_test_split
 
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+from scripts.patient_parser import PatientParser
 
 app = Flask(__name__)
 # Solves Cross Origin Resource Sharing (CORS)
@@ -25,32 +28,32 @@ CORS(app)
 
 # Used for validation
 EXPECTED = {
-  # TODO: Define constraints on data if needed
+    # TODO: Define constraints on data if needed
 }
 
 COLUMNS = [
-        # 'PATIENT_ID',
-        # 'GENDER_MALE',
-        # 'GENDER_FEMALE',
-        # 'BIRTH_DATE',
-        'AGE_RANGE_20',
-        'AGE_RANGE_40',
-        'AGE_RANGE_60',
-        # 'VISIT_DATE',
-        'TREATING_PROVIDER_DENTIST',
-        'TREATING_PROVIDER_FACULTY',
-        'TREATING_PROVIDER_STUDENT',
-        'PROCEDURE_A',
-        'PROCEDURE_B',
-        'BLEEDING_ON_PROBING',
-        'NR_OF_POCKET',
-        'NR_OF_FURCATION',
-        'NR_OF_MOBILITY',
-        'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
-        'HAS_PARODONTITIS',
-        # 'NOICE_MODIFIED',
-        # 'STUDENT_ERROR'
-    ]
+    # 'PATIENT_ID',
+    # 'GENDER_MALE',
+    # 'GENDER_FEMALE',
+    # 'BIRTH_DATE',
+    'AGE_RANGE_20',
+    'AGE_RANGE_40',
+    'AGE_RANGE_60',
+    # 'VISIT_DATE',
+    'TREATING_PROVIDER_DENTIST',
+    'TREATING_PROVIDER_FACULTY',
+    'TREATING_PROVIDER_STUDENT',
+    'PROCEDURE_A',
+    'PROCEDURE_B',
+    'BLEEDING_ON_PROBING',
+    'NR_OF_POCKET',
+    'NR_OF_FURCATION',
+    'NR_OF_MOBILITY',
+    'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
+    'HAS_PARODONTITIS',
+    # 'NOICE_MODIFIED',
+    # 'STUDENT_ERROR'
+]
 RANDOM_STATE = 1
 
 
@@ -87,17 +90,19 @@ def setup():
 
 (model, shap_explainer) = setup()
 
+
 @app.route('/api/predict/parodontitis', methods=['POST'])
 def predict():
-    content = request.json
+    # content = request.json
+    patients = PatientParser.convert_xml_to_dataframe()
     errors = []
 
     if len(errors) < 1:
         # Predict
         x = np.zeros((1, 14))
 
-        for i in range(len(COLUMNS)):
-            x[0, i] = content[COLUMNS[i]]
+        for i in range(len(patients.columns)):
+            x[0, i] = patients[patients.columns[i]][0]
 
         # Prediction
         prediction = model.predict(x)
