@@ -1,6 +1,6 @@
 # ---------------------------------
 # Krokante Krab 🦀 - 2022
-#              by Tim van den Enden
+#              by Iza, Leander, Tim en Youri
 # ---------------------------------
 import uuid
 import numpy as np
@@ -24,21 +24,40 @@ CORS(app)
 
 # Used for validation
 EXPECTED = {
-    "temperature": {"min": 0, "max": 100},
-    # "energy": {"min": 0, "max": 10000},
-    "flow": {"min": 0, "max": 10},
-    "duration": {"min": 0, "max": 10000}
+  # TODO: Define constraints on data if needed
 }
 
 
 # This method is used for loading the needed data.
 def load_data():
     # Fetch data from csv file.
-    data = pd.read_csv('./data/water-usages.csv', sep=";")
+    # TODO: fetch data from csv
+    data = pd.read_csv('', sep=";")
 
     # Only take the needed column(s)
-    # df = data[['volume', 'temperature', 'energy', 'flow', 'duration']]
-    df = data[['volume', 'temperature', 'flow', 'duration']]
+    df = data[[
+        # 'PATIENT_ID',
+        # 'GENDER_MALE',
+        # 'GENDER_FEMALE',
+        # 'BIRTH_DATE',
+        'AGE_RANGE_20',
+        'AGE_RANGE_40',
+        'AGE_RANGE_60',
+        # 'VISIT_DATE',
+        'TREATING_PROVIDER_DENTIST',
+        'TREATING_PROVIDER_FACULTY',
+        'TREATING_PROVIDER_STUDENT',
+        'PROCEDURE_A',
+        'PROCEDURE_B',
+        'BLEEDING_ON_PROBING',
+        'NR_OF_POCKET',
+        'NR_OF_FURCATION',
+        'NR_OF_MOBILITY',
+        'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
+        'HAS_PARODONTITIS',
+        # 'NOICE_MODIFIED',
+        # 'STUDENT_ERROR'
+    ]]
 
     # Creating train and test sets
     train_dataset = df.sample(frac=0.7, random_state=0)
@@ -48,8 +67,8 @@ def load_data():
     train_features = train_dataset.copy()
     test_features = test_dataset.copy()
 
-    train_labels = train_features.pop('volume')
-    test_labels = test_features.pop('volume')
+    train_labels = train_features.pop('HAS_PARODONTITIS')
+    test_labels = test_features.pop('HAS_PARODONTITIS')
 
     return (train_labels, train_features), (test_labels, test_features)
 
@@ -57,7 +76,7 @@ def load_data():
 # The setup method is used for setting everything up that we need to work with
 def setup():
     # Load neural network
-    # _model = load_model("./exported-h5/model_20220930085928.h5")
+    # TODO: Get model from wandb or from a directory
     _model = load_model("./exported-h5/model_20221013182825.h5")
 
     # Load training data
@@ -71,53 +90,27 @@ def setup():
 
 (model, shap_explainer) = setup()
 
-
-@app.route('/', methods=['GET'])
-def root():
-    response = {
-        "author": "Tim van den Enden",
-        "description": "API for AquaPredict",
-        "version": "1.1.0"
-    }
-    return jsonify(response)
-
-
-@app.route('/api/predict/water-usage-shower', methods=['POST'])
+@app.route('/api/predict/parodontitis', methods=['POST'])
 def predict():
     content = request.json
     errors = []
 
-    # Check for valid input fields
-    for name in content:
-        if name in EXPECTED:
-            expected_min = EXPECTED[name]['min']
-            expected_max = EXPECTED[name]['max']
-            value = float(content[name])
-            if value < expected_min or value > expected_max:
-                errors.append(
-                    f"Out of bounds: {name}, has value of: {value}, but should be between {expected_min} and {expected_max}."
-                )
-        else:
-            errors.append(f"Unexpected field: {name}.")
-
-    # Check for missing input fields
-    for name in EXPECTED:
-        if name not in content:
-            errors.append(f"Missing value: {name}.")
+    # TODO: Validate for errors using EXPECTED constraints
 
     if len(errors) < 1:
         # Predict
-        # x = np.zeros((1, 4))
-        x = np.zeros((1, 3))
+        x = np.zeros((1, 9))
 
-        # x[0, 0] = content['temperature']
-        # x[0, 1] = content['energy']
-        # x[0, 2] = content['flow']
-        # x[0, 3] = content['duration']
-
-        x[0, 0] = content['temperature']
-        x[0, 1] = content['flow']
-        x[0, 2] = content['duration']
+        x[0, 0] = content['TREATING_PROVIDER_DENTIST']
+        x[0, 1] = content['TREATING_PROVIDER_FACULTY']
+        x[0, 2] = content['TREATING_PROVIDER_STUDENT']
+        x[0, 3] = content['PROCEDURE_A']
+        x[0, 4] = content['PROCEDURE_B']
+        x[0, 5] = content['BLEEDING_ON_PROBING']
+        x[0, 6] = content['NR_OF_POCKET']
+        x[0, 7] = content['NR_OF_FURCATION']
+        x[0, 8] = content['NR_OF_MOBILITY']
+        x[0, 9] = content['TOTAL_LOSS_OF_ATTACHMENT_LEVEL']
 
         # Prediction
         prediction = model.predict(x)
@@ -130,8 +123,7 @@ def predict():
             shap_values[0],
             x,
             matplotlib=True,
-            # feature_names=['Temperature', 'Energy', 'Flow', 'Duration'],
-            feature_names=['Temperature', 'Flow', 'Duration'],
+            feature_names=[],# TODO define feature names
             show=False,
             plot_cmap=['#77dd77', '#f99191']
         )
