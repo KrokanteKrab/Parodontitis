@@ -8,9 +8,8 @@ class PatientParser:
         today = date.today()
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
-    def convert_xml_to_dataframe(self, path='../python/data/patient-complete.xml'):
-        parse_tree = ETree.parse(path)
-        root = parse_tree.getroot()
+    def convert_xml_to_dataframe(self, xml_string=''):
+        root = ETree.fromstring(xml_string)
 
         patient_items = []
         all_items = []
@@ -66,14 +65,14 @@ class PatientParser:
             has_parodontitis = int(patient.find('hasParodontitis').text)
 
             patient_item = [
-                patient_id,
-                is_male,
-                is_female,
-                birth_date,
+                # patient_id,
+                # is_male,
+                # is_female,
+                # birth_date,
                 age_range_20,
                 age_range_40,
                 age_range_60,
-                visit_date,
+                # visit_date,
                 treating_provider_dentist,
                 treating_provider_faculty,
                 treating_provider_student,
@@ -89,14 +88,14 @@ class PatientParser:
             all_items.append(patient_item)
 
         df = pd.DataFrame(all_items, columns=[
-            'PATIENT_ID',
-            'GENDER_MALE',
-            'GENDER_FEMALE',
-            'BIRTH_DATE',
+            # 'PATIENT_ID',
+            # 'GENDER_MALE',
+            # 'GENDER_FEMALE',
+            # 'BIRTH_DATE',
             'AGE_RANGE_20',
             'AGE_RANGE_40',
             'AGE_RANGE_60',
-            'VISIT_DATE',
+            # 'VISIT_DATE',
             'TREATING_PROVIDER_DENTIST',
             'TREATING_PROVIDER_FACULTY',
             'TREATING_PROVIDER_STUDENT',

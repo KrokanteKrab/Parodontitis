@@ -93,8 +93,9 @@ def setup():
 
 @app.route('/api/predict/parodontitis', methods=['POST'])
 def predict():
-    # content = request.json
-    patients = PatientParser.convert_xml_to_dataframe()
+    patient_xml = request.files['patient_xml']
+    patient_parser = PatientParser()
+    patients = patient_parser.convert_xml_to_dataframe(patient_xml.read())
     errors = []
 
     if len(errors) < 1:
