@@ -73,6 +73,10 @@ footer {
     opacity: 0.6;
 }
 
-#dropzone-input {
+.dropzone-input {
     display: none;
+}
+
+.shap-img {
+    width: 100%;
 }
