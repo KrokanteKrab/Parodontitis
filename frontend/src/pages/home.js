@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import denitist from "./_shared/_images/dentist-with-patient-v2.png";
 
 function Home() {
     return (<>
@@ -20,11 +19,14 @@ function Home() {
                 </div>
             </div>
         </div>
-        
+
         <div className="container">
             <div className="col-12 text-center">
                 <h2 className="sub-title">Hoe werkt onze tool?</h2>
-                <p>lorem...</p>
+                <p>
+                    Op basis van een elektronisch patiëntendossier (EPD) kan door middel van artificiële intelligentie (AI) een vroegtijdige detectie plaatsvinden voor de mondaandoening parodontitis.
+                    Hierdoor kan de tandarts of mondhygiëniste eerder binnen met de preventie of behandeling van de aandoening.
+                </p>
             </div>
             <div className="row">
                 <div className="col-12 col-md-4 item-feature">

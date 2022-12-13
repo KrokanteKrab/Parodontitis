@@ -133,6 +133,10 @@ footer {
     position: relative;
 }
 
+.header .container .btn.btn-upload {
+    min-width: 135px;
+}
+
 .header .container .btn span {
     margin-left: -25px;
 }
@@ -173,4 +177,20 @@ footer {
     font-weight: bold;
     color: #012970;
     margin-bottom: -10px;
+}
+
+.sub-title-2 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    color: #012970;
+    margin-bottom: -10px;
+}
+
+
+.card {
+    padding: 40px;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+    border: none;
+    border-radius: 10px;
+    color: #333;
 }
