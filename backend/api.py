@@ -60,7 +60,7 @@ RANDOM_STATE = 1
 # This method is used for loading the needed data.
 def load_data():
     # Fetch data from csv file.
-    data = pd.read_csv('../python/data/generated/patients-v5.csv')
+    data = pd.read_csv('./data/generated/patients-v5.csv')
 
     # Only take the needed column(s)
     X = data[COLUMNS]

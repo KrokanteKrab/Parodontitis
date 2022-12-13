@@ -2,13 +2,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY scripts/patient_parser.py scripts/
-COPY model/model-best.h5 model/
-COPY ../python/data/patients-v5.csv ../python/data/
-COPY api.py .
+COPY backend/scripts/patient_parser.py scripts/
+COPY backend/model/model-best.h5 model/
+COPY backend/data/patients-v5.csv data/
+COPY backend/api.py .
 
 EXPOSE 5000
 
