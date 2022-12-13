@@ -13,9 +13,9 @@ body {
     color: #012970;
 }
 
-main {
+.content {
     background: #fff;
-    padding: 20px;
+    /*padding: 20px;*/
 }
 
 .secondary-color {
@@ -23,13 +23,23 @@ main {
 }
 
 .navbar {
-    background: #fff !important;
-    /*box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);*/
-    border-bottom: 1px solid #eee;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    background: transparent !important;
+}
+
+.navbar a span {
+    color: #fff;
 }
 
 .navbar-brand .brand-name {
     margin-left: 20px;
+}
+
+.navbar-logo {
+    height: 45px;
+    margin-right: 5px;
 }
 
 .title {
@@ -79,4 +89,88 @@ footer {
 
 .shap-img {
     width: 100%;
+}
+
+
+.content {
+    position: relative;
+    top: 0;
+}
+
+.header {
+    background-image:
+            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)),
+            url("./_images/dentists-dental-care.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 500px;
+    background-position: center;
+}
+
+.header .container h1 {
+    font-weight: bold;
+    font-family: 'Nunito', sans-serif;
+    text-shadow: 0 1px 8px rgb(0 0 0 / 30%);
+}
+
+.header .container p {
+    font-family: 'Nunito', sans-serif;
+    text-shadow: 0 1px 8px rgb(0 0 0 / 30%);
+
+    /*max-width: 60%;*/
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.header .container .icon {
+    position: absolute;
+    top: 10px;
+    right: 28px;
+}
+
+.header .container .btn {
+    min-width: 250px;
+    position: relative;
+}
+
+.header .container .btn span {
+    margin-left: -25px;
+}
+
+.header .container .btn:hover .icon {
+    transition: .3s all ease-in-out;
+    right: 12px;
+}
+
+.item-feature {
+    text-align: center;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.item-feature .icon {
+    font-size: 75px;
+}
+
+.item-feature .icon-holder {
+    padding: 20px 20px 10px 20px;
+}
+
+.item-feature-name {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+}
+
+
+.header .container {
+    padding-top: 140px;
+    color: #fff;
+}
+
+.sub-title {
+    padding: 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    color: #012970;
+    margin-bottom: -10px;
 }
