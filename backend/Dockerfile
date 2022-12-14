@@ -10,6 +10,6 @@ COPY backend/model/model-best.h5 model/
 COPY backend/data/patients-v5.csv data/
 COPY backend/api.py .
 
-EXPOSE 5000
+EXPOSE 3000
 
 CMD ["python", "api.py"]
