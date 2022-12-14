@@ -1,4 +1,5 @@
-import PredictLogic from "./predict-logic"
+import PredictLogic from "./predict-logic";
+import Loading from "./fragments/loading";
 import Form from "./fragments/form";
 import Result from "./fragments/result";
 
@@ -13,7 +14,7 @@ function Predict() {
                     <div className="card">
 
                         {/* SHOW PREDICTION FORM */}
-                        { (values.result === undefined) &&
+                        { (values.result === undefined && !values.isLoading) &&
                             <Form logic={{ ref, values, onClick, onSubmit, onChange }} />
                         }
 
@@ -22,14 +23,22 @@ function Predict() {
                             <Result logic={{ ref, values, onClick, onSubmit, onChange }} />
                         }
 
+                        {/* SHOW LOADING SPINNER */}
+                        { (values.isLoading) &&
+                            <Loading logic={{ ref, values, onClick, onSubmit, onChange }} />
+                        }
+
+                        {/* SHOW LOADING SPINNER */}
+                        { (values.isFailed) &&
+                            <div className="alert alert-danger" role="alert">
+                                Something went wrong!
+                            </div>
+                        }
+
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
     </>);
 }
 
