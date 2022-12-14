@@ -93,11 +93,11 @@ function Predict() {
                                     <h1 className="main-color nunito sub-title-2">Resultaat</h1>
                                     <p className="under-title">
                                         { result.prediction['has-not-parodontitis'] > result.prediction['has-parodontitis'] &&
-                                            <>De patient heeft <b>geen</b> parodontitis! ({ result.prediction['has-not-parodontitis'] }%)</>
+                                            <>De patient heeft <b>geen</b> parodontitis! ({ result.prediction['has-not-parodontitis'] * 100 }%)</>
                                         }
 
                                         { result.prediction['has-parodontitis'] > result.prediction['has-not-parodontitis'] &&
-                                            <>De patient heeft <b>wel</b> parodontitis! ({ result.prediction['has-parodontitis'] }%)</>
+                                            <>De patient heeft <b>wel</b> parodontitis! ({ result.prediction['has-parodontitis'] * 100 }%)</>
                                         }
                                     </p>
 
