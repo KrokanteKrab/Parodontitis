@@ -33,7 +33,7 @@ function PredictLogic() {
         let formData = new FormData();
         formData.append('patient_xml', fileUploadRef.current.files[0]);
 
-        const url = `${ process.env.API_URL }/api/predict/parodontitis`;
+        const url = `${ process.env.REACT_APP_API_URL }/api/predict/parodontitis`;
         const options = {
             method: 'POST',
             body: formData,
