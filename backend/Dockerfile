@@ -9,7 +9,7 @@ RUN pip install -r requirements.txt
 RUN apt-get update && apt-get install -y nginx
 
 # Copy nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY backend/nginx.conf /etc/nginx/nginx.conf
 
 COPY backend/scripts/patient_parser.py scripts/
 COPY backend/model/model-best.h5 model/
