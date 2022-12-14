@@ -1,4 +1,4 @@
-name: Build and deploy a container to an Azure Web App
+name: Build and deploy api
 env:
   AZURE_WEBAPP_NAME: parodontitis-api  # set this to the name of your Azure Web App
 
