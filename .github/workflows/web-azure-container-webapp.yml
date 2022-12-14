@@ -1,4 +1,4 @@
-name: Build and deploy a container to an Azure Web App
+name: Build and deploy web app
 env:
   AZURE_WEBAPP_NAME: parodontitis-web  # set this to the name of your Azure Web App
 
@@ -48,6 +48,8 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: Logging url
+        run: echo steps.deploy-to-webapp.outputs.webapp-url
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
