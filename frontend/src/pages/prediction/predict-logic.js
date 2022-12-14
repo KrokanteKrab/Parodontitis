@@ -1,5 +1,4 @@
 import {useRef, useState} from "react";
-import env from "react-dotenv";
 
 function PredictLogic() {
     // Upload XML file for the prediction
@@ -34,7 +33,7 @@ function PredictLogic() {
         let formData = new FormData();
         formData.append('patient_xml', fileUploadRef.current.files[0]);
 
-        const url = `${ env.API_URL }/api/predict/parodontitis`;
+        const url = `${ process.env.API_URL }/api/predict/parodontitis`;
         const options = {
             method: 'POST',
             body: formData,
