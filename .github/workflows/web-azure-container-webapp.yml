@@ -45,11 +45,9 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: "https://parodontitis-web.azurewebsites.net"
 
     steps:
-      - name: Logging url
-        run: echo ${steps.deploy-to-webapp.outputs.webapp-url}
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
