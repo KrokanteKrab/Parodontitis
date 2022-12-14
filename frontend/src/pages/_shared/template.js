@@ -16,7 +16,7 @@ function Template(props) {
             {props.children}
         </div>
         <footer>
-            Ontwikkeld door Krokante Krab - 2022
+            Ontwikkeld door Krokante Krab 🦀 - 2022
         </footer>
 
     </>);
