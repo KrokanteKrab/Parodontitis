@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import env from "react-dotenv";
 
 function Predict() {
 
@@ -26,7 +27,7 @@ function Predict() {
             body: formData,
         };
 
-        fetch('http://localhost:3000/api/predict/parodontitis', requestOptions)
+        fetch(`${ env.API_URL }/api/predict/parodontitis`, requestOptions)
             .then((response) =>
                 response.json())
             .then((data) => {
