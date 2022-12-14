@@ -6,6 +6,10 @@ function PredictLogic() {
     const [label, setLabel] = useState("Klik hier om het EPD te uploaden!");
     const [icon, setIcon] = useState("fa-solid fa-arrow-up-from-bracket");
 
+    // Show loading or failed
+    const [isLoading, setIsLoading] = useState(false);
+    const [isFailed, setIsFailed] = useState(false);
+
     // Result from prediction
     const [result, setResult] = useState(undefined);
 
@@ -29,6 +33,12 @@ function PredictLogic() {
         // The form has default behavior that we don't need
         event.preventDefault();
 
+        // Reset isFailed
+        setIsFailed(false);
+
+        // Show loading bar
+        setIsLoading(true);
+
         // Get the file so when can include in our prediction request
         let formData = new FormData();
         formData.append('patient_xml', fileUploadRef.current.files[0]);
@@ -39,9 +49,15 @@ function PredictLogic() {
             body: formData,
         };
 
-        const response = await fetch(url, options);
-        const result = await response.json();
+        let result;
+        try {
+            const response = await fetch(url, options);
+            result = await response.json();
+        } catch {
+            setIsFailed(true);
+        }
 
+        setIsLoading(false);
         setResult(result);
     }
 
@@ -56,7 +72,9 @@ function PredictLogic() {
         values: {
             label,
             icon,
-            result
+            result,
+            isLoading,
+            isFailed
         },
         onClick: {
             fileUpload,
