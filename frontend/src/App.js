@@ -6,7 +6,7 @@ import PageNotFound from "./pages/_errors/page-not-found";
 
 // Page(s)
 import Home from "./pages/home";
-import Predict from "./pages/predict";
+import Predict from "./pages/prediction/predict";
 
 function App() {
     return (
