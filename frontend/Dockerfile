@@ -4,6 +4,9 @@ WORKDIR /app
 COPY frontend/package.json ./
 
 RUN npm install
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL $REACT_APP_API_URL
+
 COPY frontend/. .
 RUN npm run build
 
