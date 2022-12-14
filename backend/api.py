@@ -91,6 +91,16 @@ def setup():
 (model, shap_explainer) = setup()
 
 
+@app.route('/api/', methods=['GET'])
+def root():
+    response = {
+        "author": "Krokante Krab 🦀",
+        "description": "API for parodontitis prediction",
+        "version": "1.0.0"
+    }
+    return jsonify(response)
+
+
 @app.route('/api/predict/parodontitis', methods=['POST'])
 def predict():
     patient_xml = request.files['patient_xml']
