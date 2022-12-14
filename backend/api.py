@@ -91,7 +91,7 @@ def setup():
 (model, shap_explainer) = setup()
 
 
-@app.route('/api/', methods=['GET'])
+@app.route('/', methods=['GET'])
 def root():
     response = {
         "author": "Krokante Krab 🦀",
@@ -154,4 +154,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    app.run(port=3000, debug=True)
+    app.run(host='0.0.0.0', port=3000, debug=True)
