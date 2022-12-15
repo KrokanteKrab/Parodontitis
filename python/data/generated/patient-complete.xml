@@ -7,9 +7,13 @@
             <birthdate>28-02-1960</birthdate>
         </demoGraphics>
         <medicalVisit>
+            <date>14-01-2002</date>
+            <treatingProvider>dentist</treatingProvider>
+        </medicalVisit>
+        <medicalVisit>
             <date>14-01-2007</date>
             <treatingProvider>dentist</treatingProvider>
-            <periodontalCharts>
+            <periodontalChart>
                 <bleedingOnProbing>
                     20
                 </bleedingOnProbing>
@@ -23,9 +27,9 @@
                     0
                 </nrOfMobility>
                 <totalLossOfAttachmentLevel>
-                    0
+                    1
                 </totalLossOfAttachmentLevel>
-            </periodontalCharts>
+            </periodontalChart>
             <procedures>
                 <procedure>
                     <cptCode>
@@ -39,8 +43,5 @@
                 </procedure>
             </procedures>
         </medicalVisit>
-        <hasParodontitis>
-            1
-        </hasParodontitis>
     </patient>
 </root>

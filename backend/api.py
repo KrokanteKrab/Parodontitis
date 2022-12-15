@@ -109,38 +109,44 @@ def predict():
 
     if len(errors) < 1:
         # Predict
-        x = np.zeros((1, 13))
+        x = np.zeros((len(patients), len(COLUMNS)))
 
-        for i in range(len(patients.columns)):
-            x[0, i] = patients[patients.columns[i]][0]
+        for i in range(len(patients)):
+            for j in range(len(patients.columns)):
+                x[i, j] = patients[COLUMNS[j]][i]
 
         # Prediction
-        prediction = model.predict(x)
-        prediction = {
-            "has-not-parodontitis": float(prediction[0][0]),
-            "has-parodontitis": float(prediction[0][1]),
-            "values": {
-                "AGE_RANGE_20": x[0][0],
-                "AGE_RANGE_40": x[0][1],
-                "AGE_RANGE_60": x[0][2],
-                "TREATING_PROVIDER_DENTIST": x[0][3],
-                "TREATING_PROVIDER_FACULTY": x[0][4],
-                "TREATING_PROVIDER_STUDENT": x[0][5],
-                "PROCEDURE_A": x[0][6],
-                "PROCEDURE_B": x[0][7],
-                "BLEEDING_ON_PROBING": x[0][8],
-                "NR_OF_POCKET": x[0][9],
-                "NR_OF_FURCATION": x[0][10],
-                "NR_OF_MOBILITY": x[0][11],
-                "TOTAL_LOSS_OF_ATTACHMENT_LEVEL": x[0][12]
+        predictions = model.predict(x)
+        result = []
+
+        for i in range(len(predictions)):
+            prediction = {
+                "has-not-parodontitis": float(predictions[i][0]),
+                "has-parodontitis": float(predictions[i][1]),
+                "values": {
+                    "AGE_RANGE_20": x[i][0],
+                    "AGE_RANGE_40": x[i][1],
+                    "AGE_RANGE_60": x[i][2],
+                    "TREATING_PROVIDER_DENTIST": x[i][3],
+                    "TREATING_PROVIDER_FACULTY": x[i][4],
+                    "TREATING_PROVIDER_STUDENT": x[i][5],
+                    "PROCEDURE_A": x[i][6],
+                    "PROCEDURE_B": x[i][7],
+                    "BLEEDING_ON_PROBING": x[i][8],
+                    "NR_OF_POCKET": x[i][9],
+                    "NR_OF_FURCATION": x[i][10],
+                    "NR_OF_MOBILITY": x[i][11],
+                    "TOTAL_LOSS_OF_ATTACHMENT_LEVEL": x[i][12]
+                }
             }
-        }
+
+            result.append(prediction)
 
         # Request response
         response = {
             "id": str(uuid.uuid4()),
             "errors": errors,
-            "prediction": prediction
+            "predictions": result
         }
     else:
         # Return errors
