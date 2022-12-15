@@ -152,5 +152,56 @@ def predict():
     return jsonify(response)
 
 
+@app.route('/api/shap-img', methods=['POST'])
+def shap_img():
+    content = request.json
+    errors = []
+
+    if len(errors) < 1:
+        # Predict
+        x = np.zeros((1, 13))
+
+        for i in range(len(COLUMNS)):
+            x[0, i] = content[COLUMNS[i]]
+
+        print(x)
+
+        # Prediction
+        prediction = model.predict(x)
+        prediction = {
+            "has-not-parodontitis": float(prediction[0][0]),
+            "has-parodontitis": float(prediction[0][1])
+        }
+
+        shap_values = shap_explainer.shap_values(x)
+        if prediction["has-not-parodontitis"] > prediction["has-parodontitis"]:
+            shap.force_plot(
+                shap_explainer.expected_value[0], shap_values[0], x, matplotlib=True, show=False,
+                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
+            )
+        else:
+            shap.force_plot(
+                shap_explainer.expected_value[1], shap_values[1], x, matplotlib=True, show=False,
+                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
+            )
+
+        # Encode shap img into base64,
+        buf = BytesIO()
+        plt.savefig(buf, format='png', bbox_inches="tight")
+        shap_img = base64.b64encode(buf.getvalue()).decode("utf-8").replace("\n", "")
+
+        # Request response
+        response = {
+            "id": str(uuid.uuid4()),
+            "shap-img": shap_img,
+            "errors": errors,
+        }
+
+    else:
+        # Return errors
+        response = {"id": str(uuid.uuid4()), "errors": errors}
+
+    return jsonify(response)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=False)
