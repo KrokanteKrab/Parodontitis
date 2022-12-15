@@ -167,8 +167,6 @@ def shap_img():
         for i in range(len(COLUMNS)):
             x[0, i] = content[COLUMNS[i]]
 
-        print(x)
-
         # Prediction
         prediction = model.predict(x)
         prediction = {

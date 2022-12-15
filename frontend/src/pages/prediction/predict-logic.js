@@ -53,8 +53,6 @@ function PredictLogic() {
         try {
             const response = await fetch(url, options);
             result = await response.json();
-            console.log(result);
-
         } catch {
             setIsFailed(true);
         }

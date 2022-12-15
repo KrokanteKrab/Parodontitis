@@ -64,7 +64,6 @@ class PatientParser:
                 if procedures is not None:
                     for procedure in procedures.iter('procedure'):
                         cpt_code = procedure.find('cptCode').text.strip()
-                        print(cpt_code)
                         if cpt_code == 'A':
                             procedure_a = 1
                         if cpt_code == 'B':
