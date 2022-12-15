@@ -43,7 +43,7 @@ function PredictLogic() {
         let formData = new FormData();
         formData.append('patient_xml', fileUploadRef.current.files[0]);
 
-        const url = `${ process.env.REACT_APP_API_URL }/api/predict/parodontitis`;
+        const url = `${ process.env.REACT_APP_API_URL }/api/predict`;
         const options = {
             method: 'POST',
             body: formData,
@@ -53,6 +53,8 @@ function PredictLogic() {
         try {
             const response = await fetch(url, options);
             result = await response.json();
+            console.log(result);
+
         } catch {
             setIsFailed(true);
         }
