@@ -50,7 +50,6 @@ COLUMNS = [
     'NR_OF_FURCATION',
     'NR_OF_MOBILITY',
     'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
-    'HAS_PARODONTITIS',
     # 'NOICE_MODIFIED',
     # 'STUDENT_ERROR'
 ]
@@ -60,13 +59,13 @@ RANDOM_STATE = 1
 # This method is used for loading the needed data.
 def load_data():
     # Fetch data from csv file.
-    data = pd.read_csv('./data/patients-v5.csv')
+    data = pd.read_csv('./data/patients-v6.csv')
 
     # Only take the needed column(s)
     X = data[COLUMNS]
 
     y = data[[
-        'TRUE_HAS_PARODONTITIS'
+        'HAS_PARODONTITIS'
     ]]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=RANDOM_STATE)
@@ -77,7 +76,7 @@ def load_data():
 # The setup method is used for setting everything up that we need to work with
 def setup():
     # Load neural network
-    _model = load_model("./model/model-best.h5")
+    _model = load_model("./model/model-best-v2.h5")
 
     # Load training data
     (X_train, _), _ = load_data()
@@ -96,7 +95,7 @@ def root():
     response = {
         "author": "Krokante Krab 🦀",
         "description": "API for parodontitis prediction",
-        "version": "1.0.0"
+        "version": "1.0.1"
     }
     return jsonify(response)
 
@@ -110,7 +109,7 @@ def predict():
 
     if len(errors) < 1:
         # Predict
-        x = np.zeros((1, 14))
+        x = np.zeros((1, 13))
 
         for i in range(len(patients.columns)):
             x[0, i] = patients[patients.columns[i]][0]

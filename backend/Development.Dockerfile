@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY scripts/patient_parser.py scripts/
-COPY model/model-best.h5 model/
-COPY data/patients-v5.csv data/
+COPY model/model-best-v2.h5 model/
+COPY data/patients-v6.csv data/
 COPY api.py .
 
 EXPOSE 80

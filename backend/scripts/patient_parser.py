@@ -61,9 +61,6 @@ class PatientParser:
                 if cpt_code == 'B':
                     procedure_b = 1
 
-            # Has Parodontitis
-            has_parodontitis = int(patient.find('hasParodontitis').text)
-
             patient_item = [
                 # patient_id,
                 # is_male,
@@ -83,7 +80,6 @@ class PatientParser:
                 nr_of_furcation,
                 nr_of_mobility,
                 total_loss_of_attachment_level,
-                has_parodontitis
             ]
             all_items.append(patient_item)
 
@@ -106,7 +102,6 @@ class PatientParser:
             'NR_OF_FURCATION',
             'NR_OF_MOBILITY',
             'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
-            'HAS_PARODONTITIS'
         ])
 
         return df
