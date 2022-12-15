@@ -100,7 +100,7 @@ def root():
     return jsonify(response)
 
 
-@app.route('/api/predict/parodontitis', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict():
     patient_xml = request.files['patient_xml']
     patient_parser = PatientParser()
@@ -118,30 +118,27 @@ def predict():
         prediction = model.predict(x)
         prediction = {
             "has-not-parodontitis": float(prediction[0][0]),
-            "has-parodontitis": float(prediction[0][1])
+            "has-parodontitis": float(prediction[0][1]),
+            "values": {
+                "AGE_RANGE_20": x[0][0],
+                "AGE_RANGE_40": x[0][1],
+                "AGE_RANGE_60": x[0][2],
+                "TREATING_PROVIDER_DENTIST": x[0][3],
+                "TREATING_PROVIDER_FACULTY": x[0][4],
+                "TREATING_PROVIDER_STUDENT": x[0][5],
+                "PROCEDURE_A": x[0][6],
+                "PROCEDURE_B": x[0][7],
+                "BLEEDING_ON_PROBING": x[0][8],
+                "NR_OF_POCKET": x[0][9],
+                "NR_OF_FURCATION": x[0][10],
+                "NR_OF_MOBILITY": x[0][11],
+                "TOTAL_LOSS_OF_ATTACHMENT_LEVEL": x[0][12]
+            }
         }
-
-        shap_values = shap_explainer.shap_values(x)
-        if prediction["has-not-parodontitis"] > prediction["has-parodontitis"]:
-            shap.force_plot(
-                shap_explainer.expected_value[0], shap_values[0], x, matplotlib=True, show=False,
-                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
-            )
-        else:
-            shap.force_plot(
-                shap_explainer.expected_value[1], shap_values[1], x, matplotlib=True, show=False,
-                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
-            )
-
-        # Encode shap img into base64,
-        buf = BytesIO()
-        plt.savefig(buf, format='png', bbox_inches="tight")
-        shap_img = base64.b64encode(buf.getvalue()).decode("utf-8").replace("\n", "")
 
         # Request response
         response = {
             "id": str(uuid.uuid4()),
-            "shap-img": shap_img,
             "errors": errors,
             "prediction": prediction
         }
@@ -202,6 +199,7 @@ def shap_img():
         response = {"id": str(uuid.uuid4()), "errors": errors}
 
     return jsonify(response)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=False)
