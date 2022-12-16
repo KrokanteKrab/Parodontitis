@@ -1,12 +1,12 @@
 import pandas as pd
 import xml.etree.ElementTree as ETree
 from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
 
 class PatientParser:
-    def calculate_age(self, born):
-        today = date.today()
-        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+    def calculate_age(self, birthdate, other_date=date.today()):
+        return relativedelta(other_date, birthdate).years
 
     def convert_xml_to_dataframe(self, xml_string=''):
         root = ETree.fromstring(xml_string)
@@ -26,12 +26,15 @@ class PatientParser:
 
             # Age
             birth_date = demographics.find('birthdate').text
-            age = self.calculate_age(datetime.strptime(birth_date, '%d-%m-%Y').date())
+            birth_date_formatted = datetime.strptime(birth_date, '%d-%m-%Y').date()
+            age = self.calculate_age(birthdate=birth_date_formatted)
 
             # Medical visit
             medical_visits = patient.iter('medicalVisit')
             for medical_visit in medical_visits:
                 visit_date = medical_visit.find('date').text
+                visit_date_formatted = datetime.strptime(visit_date, '%d-%m-%Y').date()
+                visit_age = self.calculate_age(birthdate=birth_date_formatted, other_date=visit_date_formatted)
 
                 patient_item = [
                     patient_id,
@@ -40,6 +43,7 @@ class PatientParser:
                     birth_date,
                     age,
                     visit_date,
+                    visit_age
                 ]
                 all_items.append(patient_item)
 
@@ -50,6 +54,7 @@ class PatientParser:
             'BIRTH_DATE',
             'AGE',
             'VISIT_DATE',
+            'VISIT_AGE'
         ])
 
         return df
