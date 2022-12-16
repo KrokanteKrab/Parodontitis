@@ -39,6 +39,10 @@ class PredictionParser:
                 visit_date_formatted = datetime.strptime(visit_date, '%d-%m-%Y').date()
                 visit_age = self.calculate_age(birthdate=birth_date_formatted, other_date=visit_date_formatted)
 
+                age_range_20 = int(20 <= visit_age < 40 if 1 else 0)
+                age_range_40 = int(40 <= visit_age < 60 if 1 else 0)
+                age_range_60 = int(visit_age >= 60 if 1 else 0)
+
                 # Treating provider
                 treating_provider = medical_visit.find('treatingProvider').text
                 treating_provider_dentist = int(treating_provider == 'dentist' if 1 else 0)

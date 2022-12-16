@@ -127,6 +127,7 @@ def predict():
             prediction = {
                 "has-not-parodontitis": float(predictions[i][0]),
                 "has-parodontitis": float(predictions[i][1]),
+                "show-shap": 0,
                 "values": {
                     "AGE_RANGE_20": x[i][0],
                     "AGE_RANGE_40": x[i][1],

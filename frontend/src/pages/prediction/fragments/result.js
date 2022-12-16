@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid';
+
 function Result(props) {
 
     let { values, onClick } = props.logic;
@@ -51,13 +53,13 @@ function Result(props) {
                     {/* VISIT(S) */}
                     <div className="row">
 
-                        { values.result.predictions.map(function(prediction, index){ return (
-                            <div className="col-12 spacer" key={ index }>
+                        { values.result.predictions.map((prediction, i) =>
+                            <div className="col-12 spacer" key={ i }>
 
                                 <div className="row">
                                     <div className="col-auto">
                                         <div className="visit_attribute">
-                                            <i className="fa-solid fa-calendar-day"></i> { values.result.visits[index]['VISIT_DATE'] }
+                                            <i className="fa-solid fa-calendar-day"></i> { values.result.visits[i]['VISIT_DATE'] }
                                         </div>
                                     </div>
                                     <div className="col-auto">
@@ -93,25 +95,31 @@ function Result(props) {
                                             <>De patient heeft <b>wel</b> parodontitis! ({ (prediction['has-parodontitis'] * 100).toFixed(2) }%)</>
                                         }
 
-                                        { (!values.showShapImg.includes(index)) &&
+                                        { prediction['show-shap'] === 0 &&
                                             <small>
-                                                Klik <b onClick={ onClick.enableShapImg } data-index={ index } >hier</b> voor meer informatie over de voorspelling.
+                                                <br/><br/>
+                                                Klik <b onClick={ onClick.enableShapImg } data-index={ i } >hier</b> voor meer informatie over de voorspelling.
                                             </small>
                                         }
-
-                                        {  (values.showShapImg.includes(index)) &&
+                                        { (prediction['show-shap'] === 1) &&
                                             <small>
-                                                Yeet
+                                                <br/><br/>
+                                                De uitleg wordt geladen...
                                             </small>
                                         }
                                     </p>
 
 
 
+                                    { (prediction['show-shap'] !== 0 && prediction['show-shap'] !== 1) &&
+                                       <div>
+                                           <img className="shap-img" src={"data:image/png;base64, " + prediction['show-shap']} alt="shap"/>
+                                       </div>
+                                    }
                                 </div>
 
                             </div>
-                        )})}
+                        )}
 
 
                     </div>

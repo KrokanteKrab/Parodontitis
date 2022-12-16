@@ -6,9 +6,6 @@ function PredictLogic() {
     const [label, setLabel] = useState("Klik hier om het EPD te uploaden!");
     const [icon, setIcon] = useState("fa-solid fa-arrow-up-from-bracket");
 
-    // SHAP image show/hide
-    const [showShapImg, setShowShapImg] = useState([]);
-
     // Show loading or failed
     const [isLoading, setIsLoading] = useState(false);
     const [isFailed, setIsFailed] = useState(false);
@@ -66,17 +63,37 @@ function PredictLogic() {
 
     const reset = () => {
         setResult(undefined);
+        setLabel("Klik hier om het EPD te uploaden!");
+        setIcon("fa-solid fa-arrow-up-from-bracket");
     }
 
-    const enableShapImg = (event) => {
+    const enableShapImg = async (event) => {
         const index = event.currentTarget.dataset.index;
 
-        const merged = [...showShapImg, ...[index]]
+        let copy;
+        copy = { ...result };
+        copy['predictions'][index]['show-shap'] = 1;
+        setResult(copy);
 
-        setShowShapImg(merged);
-        console.log(showShapImg);
+        const url = `${ process.env.REACT_APP_API_URL }/api/shap-img`;
+        const options = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ ...result.predictions[index].values })
+        };
 
-        console.log(showShapImg.includes(index))
+        let res;
+        try {
+            const response = await fetch(url, options);
+            res = await response.json();
+        } catch {
+            setIsFailed(true);
+        }
+
+        copy = { ...result };
+        copy['predictions'][index]['show-shap'] = res['shap-img'];
+
+        setResult(copy);
     }
 
     return {
@@ -88,8 +105,7 @@ function PredictLogic() {
             icon,
             result,
             isLoading,
-            isFailed,
-            showShapImg
+            isFailed
         },
         onClick: {
             fileUpload,
