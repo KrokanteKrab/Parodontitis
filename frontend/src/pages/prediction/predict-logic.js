@@ -41,9 +41,9 @@ function PredictLogic() {
 
         // Get the file so when can include in our prediction request
         let formData = new FormData();
-        formData.append('patient_xml', fileUploadRef.current.files[0]);
+        formData.append('epd_xml', fileUploadRef.current.files[0]);
 
-        const url = `${ process.env.REACT_APP_API_URL }/api/predict/parodontitis`;
+        const url = `${ process.env.REACT_APP_API_URL }/api/predict`;
         const options = {
             method: 'POST',
             body: formData,
@@ -63,6 +63,37 @@ function PredictLogic() {
 
     const reset = () => {
         setResult(undefined);
+        setLabel("Klik hier om het EPD te uploaden!");
+        setIcon("fa-solid fa-arrow-up-from-bracket");
+    }
+
+    const enableShapImg = async (event) => {
+        const index = event.currentTarget.dataset.index;
+
+        let copy;
+        copy = { ...result };
+        copy['predictions'][index]['show-shap'] = 1;
+        setResult(copy);
+
+        const url = `${ process.env.REACT_APP_API_URL }/api/shap-img`;
+        const options = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ ...result.predictions[index].values })
+        };
+
+        let res;
+        try {
+            const response = await fetch(url, options);
+            res = await response.json();
+        } catch {
+            setIsFailed(true);
+        }
+
+        copy = { ...result };
+        copy['predictions'][index]['show-shap'] = res['shap-img'];
+
+        setResult(copy);
     }
 
     return {
@@ -78,7 +109,8 @@ function PredictLogic() {
         },
         onClick: {
             fileUpload,
-            reset
+            reset,
+            enableShapImg
         },
         onSubmit: {
             predict

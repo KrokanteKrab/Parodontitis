@@ -5,7 +5,7 @@ import Result from "./fragments/result";
 
 function Predict() {
 
-    const { ref, values, onClick, onSubmit, onChange } = new PredictLogic()
+    let { ref, values, onClick, onSubmit, onChange } = new PredictLogic()
 
     return (<>
         <div className="header">

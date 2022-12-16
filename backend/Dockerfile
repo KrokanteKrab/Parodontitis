@@ -11,9 +11,10 @@ RUN apt-get update && apt-get install -y nginx
 # Copy nginx configuration file
 COPY backend/nginx.conf /etc/nginx/nginx.conf
 
+COPY backend/scripts/prediction_parser.py scripts/
 COPY backend/scripts/patient_parser.py scripts/
-COPY backend/model/model-best.h5 model/
-COPY backend/data/patients-v5.csv data/
+COPY backend/model/model-best-v2.h5 model/
+COPY backend/data/patients-v6.csv data/
 COPY backend/api.py .
 
 EXPOSE 80

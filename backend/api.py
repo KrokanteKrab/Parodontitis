@@ -20,6 +20,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from scripts.prediction_parser import PredictionParser
 from scripts.patient_parser import PatientParser
 
 app = Flask(__name__)
@@ -50,7 +51,6 @@ COLUMNS = [
     'NR_OF_FURCATION',
     'NR_OF_MOBILITY',
     'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
-    'HAS_PARODONTITIS',
     # 'NOICE_MODIFIED',
     # 'STUDENT_ERROR'
 ]
@@ -60,13 +60,13 @@ RANDOM_STATE = 1
 # This method is used for loading the needed data.
 def load_data():
     # Fetch data from csv file.
-    data = pd.read_csv('./data/patients-v5.csv')
+    data = pd.read_csv('./data/patients-v6.csv')
 
     # Only take the needed column(s)
     X = data[COLUMNS]
 
     y = data[[
-        'TRUE_HAS_PARODONTITIS'
+        'HAS_PARODONTITIS'
     ]]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=RANDOM_STATE)
@@ -77,7 +77,7 @@ def load_data():
 # The setup method is used for setting everything up that we need to work with
 def setup():
     # Load neural network
-    _model = load_model("./model/model-best.h5")
+    _model = load_model("./model/model-best-v2.h5")
 
     # Load training data
     (X_train, _), _ = load_data()
@@ -96,24 +96,101 @@ def root():
     response = {
         "author": "Krokante Krab 🦀",
         "description": "API for parodontitis prediction",
-        "version": "1.0.0"
+        "version": "1.0.1"
     }
     return jsonify(response)
 
 
-@app.route('/api/predict/parodontitis', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict():
-    patient_xml = request.files['patient_xml']
+    epd_xml = request.files['epd_xml']
+    read_epd = epd_xml.read()
+    prediction_parser = PredictionParser()
+    prediction_data = prediction_parser.convert_xml_to_dataframe(read_epd)
     patient_parser = PatientParser()
-    patients = patient_parser.convert_xml_to_dataframe(patient_xml.read())
+    patient_data = patient_parser.convert_xml_to_dataframe(read_epd)
     errors = []
 
     if len(errors) < 1:
         # Predict
-        x = np.zeros((1, 14))
+        x = np.zeros((len(prediction_data), len(COLUMNS)))
 
-        for i in range(len(patients.columns)):
-            x[0, i] = patients[patients.columns[i]][0]
+        for i in range(len(prediction_data)):
+            for j in range(len(prediction_data.columns)):
+                x[i, j] = prediction_data[COLUMNS[j]][i]
+
+        # Prediction
+        predictions = model.predict(x)
+        prediction_result = []
+
+        for i in range(len(predictions)):
+            prediction = {
+                "has-not-parodontitis": float(predictions[i][0]),
+                "has-parodontitis": float(predictions[i][1]),
+                "show-shap": 0,
+                "values": {
+                    "AGE_RANGE_20": x[i][0],
+                    "AGE_RANGE_40": x[i][1],
+                    "AGE_RANGE_60": x[i][2],
+                    "TREATING_PROVIDER_DENTIST": x[i][3],
+                    "TREATING_PROVIDER_FACULTY": x[i][4],
+                    "TREATING_PROVIDER_STUDENT": x[i][5],
+                    "PROCEDURE_A": x[i][6],
+                    "PROCEDURE_B": x[i][7],
+                    "BLEEDING_ON_PROBING": x[i][8],
+                    "NR_OF_POCKET": x[i][9],
+                    "NR_OF_FURCATION": x[i][10],
+                    "NR_OF_MOBILITY": x[i][11],
+                    "TOTAL_LOSS_OF_ATTACHMENT_LEVEL": x[i][12]
+                }
+            }
+
+            prediction_result.append(prediction)
+
+        # Patient
+        patient_result = {
+            "PATIENT_ID": patient_data['PATIENT_ID'][0],
+            "GENDER_MALE": int(patient_data['GENDER_MALE'][0]),
+            "GENDER_FEMALE": int(patient_data['GENDER_FEMALE'][0]),
+            "BIRTH_DATE": patient_data['BIRTH_DATE'][0],
+            "AGE": int(patient_data['AGE'][0])
+        }
+
+        visit_result = []
+        for i in range(len(patient_data)):
+            visit = {
+                "VISIT_DATE": patient_data['VISIT_DATE'][i],
+                "VISIT_AGE": int(patient_data['VISIT_AGE'][i])
+            }
+
+            visit_result.append(visit)
+
+        # Request response
+        response = {
+            "id": str(uuid.uuid4()),
+            "errors": errors,
+            "predictions": prediction_result,
+            "patient": patient_result,
+            "visits": visit_result
+        }
+    else:
+        # Return errors
+        response = {"id": str(uuid.uuid4()), "errors": errors}
+
+    return jsonify(response)
+
+
+@app.route('/api/shap-img', methods=['POST'])
+def shap_img():
+    content = request.json
+    errors = []
+
+    if len(errors) < 1:
+        # Predict
+        x = np.zeros((1, 13))
+
+        for i in range(len(COLUMNS)):
+            x[0, i] = content[COLUMNS[i]]
 
         # Prediction
         prediction = model.predict(x)
@@ -144,8 +221,8 @@ def predict():
             "id": str(uuid.uuid4()),
             "shap-img": shap_img,
             "errors": errors,
-            "prediction": prediction
         }
+
     else:
         # Return errors
         response = {"id": str(uuid.uuid4()), "errors": errors}
@@ -154,4 +231,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(host='0.0.0.0', port=3000, debug=False)
