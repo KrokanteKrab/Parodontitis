@@ -20,6 +20,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from scripts.prediction_parser import PredictionParser
 from scripts.patient_parser import PatientParser
 
 app = Flask(__name__)
@@ -102,22 +103,25 @@ def root():
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
-    patient_xml = request.files['patient_xml']
+    epd_xml = request.files['epd_xml']
+    read_epd = epd_xml.read()
+    prediction_parser = PredictionParser()
+    prediction_data = prediction_parser.convert_xml_to_dataframe(read_epd)
     patient_parser = PatientParser()
-    patients = patient_parser.convert_xml_to_dataframe(patient_xml.read())
+    patient_data = patient_parser.convert_xml_to_dataframe(read_epd)
     errors = []
 
     if len(errors) < 1:
         # Predict
-        x = np.zeros((len(patients), len(COLUMNS)))
+        x = np.zeros((len(prediction_data), len(COLUMNS)))
 
-        for i in range(len(patients)):
-            for j in range(len(patients.columns)):
-                x[i, j] = patients[COLUMNS[j]][i]
+        for i in range(len(prediction_data)):
+            for j in range(len(prediction_data.columns)):
+                x[i, j] = prediction_data[COLUMNS[j]][i]
 
         # Prediction
         predictions = model.predict(x)
-        result = []
+        prediction_result = []
 
         for i in range(len(predictions)):
             prediction = {
@@ -140,13 +144,32 @@ def predict():
                 }
             }
 
-            result.append(prediction)
+            prediction_result.append(prediction)
+
+        # Patient
+        patient_result = {
+            "PATIENT_ID": patient_data['PATIENT_ID'][0],
+            "GENDER_MALE": int(patient_data['GENDER_MALE'][0]),
+            "GENDER_FEMALE": int(patient_data['GENDER_FEMALE'][0]),
+            "BIRTH_DATE": patient_data['BIRTH_DATE'][0],
+            "AGE": int(patient_data['AGE'][0])
+        }
+
+        visit_result = []
+        for i in range(len(patient_data)):
+            visit = {
+                "VISIT_DATE": patient_data['VISIT_DATE'][i]
+            }
+
+            visit_result.append(visit)
 
         # Request response
         response = {
             "id": str(uuid.uuid4()),
             "errors": errors,
-            "predictions": result
+            "predictions": prediction_result,
+            "patient": patient_result,
+            "visits": visit_result
         }
     else:
         # Return errors

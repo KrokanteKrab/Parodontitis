@@ -41,7 +41,7 @@ function PredictLogic() {
 
         // Get the file so when can include in our prediction request
         let formData = new FormData();
-        formData.append('patient_xml', fileUploadRef.current.files[0]);
+        formData.append('epd_xml', fileUploadRef.current.files[0]);
 
         const url = `${ process.env.REACT_APP_API_URL }/api/predict`;
         const options = {
