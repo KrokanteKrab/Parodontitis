@@ -6,6 +6,9 @@ function PredictLogic() {
     const [label, setLabel] = useState("Klik hier om het EPD te uploaden!");
     const [icon, setIcon] = useState("fa-solid fa-arrow-up-from-bracket");
 
+    // SHAP image show/hide
+    const [showShapImg, setShowShapImg] = useState([]);
+
     // Show loading or failed
     const [isLoading, setIsLoading] = useState(false);
     const [isFailed, setIsFailed] = useState(false);
@@ -65,6 +68,17 @@ function PredictLogic() {
         setResult(undefined);
     }
 
+    const enableShapImg = (event) => {
+        const index = event.currentTarget.dataset.index;
+
+        const merged = [...showShapImg, ...[index]]
+
+        setShowShapImg(merged);
+        console.log(showShapImg);
+
+        console.log(showShapImg.includes(index))
+    }
+
     return {
         ref: {
             fileUpload: fileUploadRef
@@ -74,11 +88,13 @@ function PredictLogic() {
             icon,
             result,
             isLoading,
-            isFailed
+            isFailed,
+            showShapImg
         },
         onClick: {
             fileUpload,
-            reset
+            reset,
+            enableShapImg
         },
         onSubmit: {
             predict
