@@ -158,7 +158,8 @@ def predict():
         visit_result = []
         for i in range(len(patient_data)):
             visit = {
-                "VISIT_DATE": patient_data['VISIT_DATE'][i]
+                "VISIT_DATE": patient_data['VISIT_DATE'][i],
+                "VISIT_AGE": int(patient_data['VISIT_AGE'][i])
             }
 
             visit_result.append(visit)

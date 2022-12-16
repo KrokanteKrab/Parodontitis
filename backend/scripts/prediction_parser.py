@@ -1,12 +1,12 @@
 import pandas as pd
 import xml.etree.ElementTree as ETree
 from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
 
 class PredictionParser:
-    def calculate_age(self, born):
-        today = date.today()
-        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+    def calculate_age(self, birthdate, other_date=date.today()):
+        return relativedelta(other_date, birthdate).years
 
     def convert_xml_to_dataframe(self, xml_string=''):
         root = ETree.fromstring(xml_string)
@@ -26,7 +26,8 @@ class PredictionParser:
 
             # Age
             birth_date = demographics.find('birthdate').text
-            age = self.calculate_age(datetime.strptime(birth_date, '%d-%m-%Y').date())
+            birth_date_formatted = datetime.strptime(birth_date, '%d-%m-%Y').date()
+            age = self.calculate_age(birthdate=birth_date_formatted)
             age_range_20 = int(20 <= age < 40 if 1 else 0)
             age_range_40 = int(40 <= age < 60 if 1 else 0)
             age_range_60 = int(age >= 60 if 1 else 0)
@@ -35,6 +36,8 @@ class PredictionParser:
             medical_visits = patient.iter('medicalVisit')
             for medical_visit in medical_visits:
                 visit_date = medical_visit.find('date').text
+                visit_date_formatted = datetime.strptime(visit_date, '%d-%m-%Y').date()
+                visit_age = self.calculate_age(birthdate=birth_date_formatted, other_date=visit_date_formatted)
 
                 # Treating provider
                 treating_provider = medical_visit.find('treatingProvider').text
@@ -78,6 +81,7 @@ class PredictionParser:
                     age_range_40,
                     age_range_60,
                     # visit_date,
+                    # visit_age,
                     treating_provider_dentist,
                     treating_provider_faculty,
                     treating_provider_student,
@@ -100,6 +104,7 @@ class PredictionParser:
             'AGE_RANGE_40',
             'AGE_RANGE_60',
             # 'VISIT_DATE',
+            # 'VISIT_AGE',
             'TREATING_PROVIDER_DENTIST',
             'TREATING_PROVIDER_FACULTY',
             'TREATING_PROVIDER_STUDENT',
