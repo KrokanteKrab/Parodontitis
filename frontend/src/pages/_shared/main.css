@@ -1,33 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+@import './_css/fonts.css';
 
 @import './_css/nav.css';
+@import './_css/header.css';
+
+@import './_css/file-upload.css';
+@import './_css/result.css';
+
 
 body {
     background: #eee;
 }
 
-.nunito {
-    font-family: 'Nunito', sans-serif;
-    font-weight: bold;
-}
-
-.main-color {
-    color: #012970;
-}
-
-.content {
+main {
     background: #fff;
-    /*padding: 20px;*/
-}
-
-
-
-.title {
-    margin-top: 60px;
-}
-
-.under-title {
-    width: 82%;
 }
 
 footer {
@@ -38,135 +23,6 @@ footer {
     color: rgb(0 0 0 / 22%);
 }
 
-.dropzone {
-    width: 100%;
-    background: #eee;
-    border: 2px dashed #333;
-    border-radius: 5px;
-    padding: 20px;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-    cursor: pointer;
-}
-
-.dropzone-icon {
-    display: block;
-    font-size: 75px;
-    margin: 20px;
-    opacity: 0.3;
-}
-
-.dropzone-text {
-    margin-bottom: 20px;
-    font-weight: bold;
-    opacity: 0.6;
-}
-
-.dropzone-input {
-    display: none;
-}
-
-.shap-img {
-    width: 100%;
-}
-
-
-.content {
-    position: relative;
-    top: 0;
-}
-
-.header {
-    background-image:
-            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)),
-            url("./_images/dentists-dental-care.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 500px;
-    background-position: center;
-}
-
-.header .container h1 {
-    font-weight: bold;
-    font-family: 'Nunito', sans-serif;
-    text-shadow: 0 1px 8px rgb(0 0 0 / 30%);
-}
-
-.header .container p {
-    font-family: 'Nunito', sans-serif;
-    text-shadow: 0 1px 8px rgb(0 0 0 / 30%);
-
-    /*max-width: 60%;*/
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.header .container .icon {
-    position: absolute;
-    top: 10px;
-    right: 28px;
-}
-
-.header .container .btn {
-    min-width: 250px;
-    position: relative;
-}
-
-.header .container .btn.btn-upload {
-    min-width: 135px;
-}
-
-.header .container .btn span {
-    margin-left: -25px;
-}
-
-.header .container .btn:hover .icon {
-    transition: .3s all ease-in-out;
-    right: 12px;
-}
-
-.item-feature {
-    text-align: center;
-    margin-bottom: 30px;
-    opacity: 0.8;
-}
-
-.item-feature .icon {
-    font-size: 75px;
-}
-
-.item-feature .icon-holder {
-    padding: 20px 20px 10px 20px;
-}
-
-.item-feature-name {
-    font-family: 'Nunito', sans-serif;
-    font-weight: bold;
-}
-
-
-.header .container {
-    padding-top: 140px;
-    color: #fff;
-}
-
-.sub-title {
-    padding: 20px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: bold;
-    color: #012970;
-    margin-bottom: -10px;
-}
-
-.sub-title-2 {
-    font-family: 'Nunito', sans-serif;
-    font-weight: bold;
-    color: #012970;
-    margin-bottom: -10px;
-}
-
-
 .card {
     padding: 40px;
     box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
@@ -174,46 +30,5 @@ footer {
     border-radius: 10px;
     color: #333;
 }
-
-.person-profile-img {
-    background: rgb(13 110 253 / 25%);
-    padding: 20px;
-    font-size: 75px;
-    width: 155px;
-    height: 155px;
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
-    color: #fff;
-    text-shadow: 0 1px 8px rgb(0 0 0 / 30%);
-    margin: 40px auto;
-}
-
-.patient_attribute_holder {
-    margin-top: 40px;
-}
-
-.patient_attribute {
-    padding: 5px 20px;
-    margin-bottom: 5px;
-}
-
-.patient_attribute i, .visit_attribute i {
-    box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
-    border-radius: 100%;
-    background: #e3e3e3;
-    padding-top: 10px;
-    font-size: 20px;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    margin-right: 5px;
-}
-
-.spacer {
-    border-bottom: 1px solid #e3e3e3;
-    margin: 0 0 20px;
-}
-
 
 

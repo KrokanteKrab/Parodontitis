@@ -22,9 +22,9 @@ function Template(props) {
             </div>
         </div>
 
-        <div className="content">
+        <main>
             {props.children}
-        </div>
+        </main>
         <footer>
             Ontwikkeld door Krokante Krab 🦀 - 2022
         </footer>
