@@ -21,8 +21,8 @@ function Home() {
         </div>
 
         <div className="container">
-            <div className="col-12 text-center">
-                <h2 className="sub-title">Hoe werkt onze tool?</h2>
+            <div className="col-12 text-start">
+                <h2 className="sub-title-3">Hoe werkt onze tool?</h2>
                 <p>
                     Op basis van een elektronisch patiëntendossier (EPD) kan door middel van artificiële intelligentie (AI) een vroegtijdige detectie plaatsvinden voor de mondaandoening parodontitis.
                     Hierdoor kan de tandarts of mondhygiëniste eerder binnen met de preventie of behandeling van de aandoening.
@@ -49,6 +49,7 @@ function Home() {
                 </div>
             </div>
         </div>
+
     </>);
 }
 

@@ -1,0 +1,32 @@
+@import './_css/fonts.css';
+
+@import './_css/nav.css';
+@import './_css/header.css';
+
+@import './_css/file-upload.css';
+@import './_css/result.css';
+@import './_css/badges.css';
+
+body {
+    background: #eee;
+}
+
+main {
+    background: #fff;
+}
+
+footer {
+    padding: 20px;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    color: rgb(0 0 0 / 22%);
+}
+
+.card {
+    padding: 40px;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+    border: none;
+    border-radius: 10px;
+    color: #333;
+}

@@ -12,13 +12,13 @@ function Form(props) {
                             Het elektronisch patiëntendossier (EPD) is verplicht om als xml te worden geupload.
                         </p>
 
-                        <div className="dropzone" onClick={ onClick.fileUpload }>
-                            <div className="dropzone-text">
-                                <i className={ values.icon + " dropzone-icon" }/>
-                                <div className="dropzone-text nunito">{ values.label }</div>
+                        <div className="file-upload" onClick={ onClick.fileUpload }>
+                            <div className="file-upload-text">
+                                <i className={ values.icon + " file-upload-icon" }/>
+                                <div>{ values.label }</div>
                             </div>
 
-                            <input className="dropzone-input" type="file" accept=".xml" ref={ ref.fileUpload } onChange={ onChange.fileChange }/>
+                            <input className="file-upload-input" type="file" accept=".xml" ref={ ref.fileUpload } onChange={ onChange.fileChange }/>
                         </div>
 
                         <button type="submit" className="btn btn-primary btn-upload nunito">
