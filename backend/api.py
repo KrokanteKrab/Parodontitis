@@ -2,6 +2,7 @@
 # Krokante Krab 🦀 - 2022
 #              by Iza, Leander, Tim en Youri
 # ---------------------------------
+import string
 import uuid
 import numpy as np
 import shap
@@ -199,16 +200,17 @@ def shap_img():
             "has-parodontitis": float(prediction[0][1])
         }
 
+        aliases = string.ascii_uppercase[:len(COLUMNS)]
         shap_values = shap_explainer.shap_values(x)
         if prediction["has-not-parodontitis"] > prediction["has-parodontitis"]:
             shap.force_plot(
                 shap_explainer.expected_value[0], shap_values[0], x, matplotlib=True, show=False,
-                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
+                plot_cmap=['#77dd77', '#f99191'], feature_names=aliases
             )
         else:
             shap.force_plot(
                 shap_explainer.expected_value[1], shap_values[1], x, matplotlib=True, show=False,
-                plot_cmap=['#77dd77', '#f99191'], feature_names=COLUMNS
+                plot_cmap=['#77dd77', '#f99191'], feature_names=aliases
             )
 
         # Encode shap img into base64,
@@ -216,10 +218,13 @@ def shap_img():
         plt.savefig(buf, format='png', bbox_inches="tight")
         shap_img = base64.b64encode(buf.getvalue()).decode("utf-8").replace("\n", "")
 
+        aliases_with_column_name = dict(zip(COLUMNS, aliases))
+
         # Request response
         response = {
             "id": str(uuid.uuid4()),
             "shap-img": shap_img,
+            "feature_aliases": aliases_with_column_name,
             "errors": errors,
         }
 
