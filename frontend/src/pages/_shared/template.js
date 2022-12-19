@@ -24,7 +24,7 @@ function Template(props) {
                             </Link>
                         </div>
                         <div className="col-auto">
-                            <Link to="/" className="navbar-link">
+                            <Link to="/privacy" className="navbar-link">
                                 <i className="fa-solid fa-user-shield"></i> Privacy
                             </Link>
                         </div>

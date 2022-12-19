@@ -32,6 +32,14 @@
     margin-bottom: -10px;
 }
 
+.sub-title-3 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    color: #012970;
+    padding: 40px 0 20px 0;
+    /*margin-bottom: -10px;*/
+}
+
 .person-profile-img {
     background: rgb(13 110 253 / 25%);
     padding: 20px;
