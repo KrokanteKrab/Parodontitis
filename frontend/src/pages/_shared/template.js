@@ -14,7 +14,25 @@ function Template(props) {
 
                     <div className="row">
                         <div className="col-auto">
-                            <Link to="/" className="navbar-link">Home</Link>
+                            <Link to="/" className="navbar-link">
+                                <i className="fa-solid fa-house-chimney"></i> Home
+                            </Link>
+                        </div>
+                        <div className="col-auto">
+                            <Link to="/predict" className="navbar-link">
+                                <i className="fa-solid fa-microchip"></i> Tool
+                            </Link>
+                        </div>
+                        <div className="col-auto">
+                            <Link to="/" className="navbar-link">
+                                <i className="fa-solid fa-user-shield"></i> Privacy
+                            </Link>
+                        </div>
+                        <div className="col-auto">
+                            <Link to="/" className="navbar-link">
+                                <i className="fa-solid fa-people-group"></i> Over ons
+                            </Link>
+
                         </div>
                     </div>
                 </nav>
