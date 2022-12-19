@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 
+@import './_css/nav.css';
+
 body {
     background: #eee;
 }
@@ -18,28 +20,7 @@ body {
     /*padding: 20px;*/
 }
 
-.secondary-color {
-    color: rgb(244,115,93);
-}
 
-.navbar {
-    position: absolute;
-    z-index: 1;
-    background: transparent !important;
-}
-
-.navbar a span {
-    color: #fff;
-}
-
-.navbar-brand .brand-name {
-    margin-left: 20px;
-}
-
-.navbar-logo {
-    height: 45px;
-    margin-right: 5px;
-}
 
 .title {
     margin-top: 60px;
