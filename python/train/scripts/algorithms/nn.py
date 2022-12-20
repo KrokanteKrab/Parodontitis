@@ -4,10 +4,8 @@ from keras.layers import Input, Dense, Normalization, Dropout
 from keras.optimizers import Adam, SGD, RMSprop
 from keras.losses import SparseCategoricalCrossentropy
 
-import shap
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 
 import wandb
 from wandb.keras import WandbCallback

@@ -1,5 +1,6 @@
 from scripts.args_parser import ArgsParser
 from scripts.algorithms.nn import NN
+from scripts.algorithms.rf import RF
 
 print("[*] ------------------------------------------")
 print("[*] Welcome by parodontitis!")
@@ -9,9 +10,12 @@ print("[*] ------------------------------------------")
 # Get config based on arguments
 parser = ArgsParser()
 config = parser.get_config()
+algorithm = config['algorithm']
 
 # Run selected algorithm
-match config['algorithm']:
-    case 'nn':
-        nn = NN(config)
-        nn.train()
+algorithms = {
+    'nn': NN,
+    'rf': RF
+}
+
+algorithms[algorithm](config).train()
