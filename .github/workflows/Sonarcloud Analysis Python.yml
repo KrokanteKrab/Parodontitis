@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - '*'
-    paths:
-      - 'backend/*'
-      - 'python/scripts/*'
 
 jobs:
   build:
@@ -17,14 +14,15 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}
     steps:
       - uses: actions/checkout@v3
-      - name: Install dependencies and build tools
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
         run: |
-          apk add --no-cache python3 gfortran make
-          python3 -m ensurepip
-          pip3 install -r requirements.txt
-      - name: Build Fortran code
-        run: |
-          make
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
       - name: Run static analysis
         run: |
+          pip install sonar-scanner
           sonar-scanner -Dsonar.projectBaseDir=./backend,./python/scripts -Dsonar.projectKey=parodontitis-api
