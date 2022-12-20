@@ -3,7 +3,7 @@ name: Static Analysis React Web
 on:
   pull_request:
     branches:
-      - 'main'
+      - '*'
     paths:
       - 'frontend/*'
 
