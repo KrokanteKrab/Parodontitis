@@ -10,7 +10,7 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
-    if: steps.if.contains(github.event.pull_request.commits.modified, '/backend/**')
+    if: github.event.pull_request.commits.modified in '/backend/**'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -34,7 +34,7 @@ jobs:
 
   frontend:
     runs-on: ubuntu-latest
-    if: steps.if.contains(github.event.pull_request.commits.modified, '/frontend/**')
+    if: github.event.pull_request.commits.modified in '/frontend/**'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node.js
