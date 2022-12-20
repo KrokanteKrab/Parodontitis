@@ -17,12 +17,14 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}
     steps:
       - uses: actions/checkout@v3
-      - name: Install dependencies
+      - name: Install dependencies and build tools
         run: |
-          apk add --no-cache python3
+          apk add --no-cache python3 gfortran make
           python3 -m ensurepip
-          pip3 install --upgrade pip
           pip3 install -r requirements.txt
+      - name: Build Fortran code
+        run: |
+          make
       - name: Run static analysis
         run: |
           sonar-scanner -Dsonar.projectBaseDir=./backend,./python/scripts -Dsonar.projectKey=parodontitis-api
