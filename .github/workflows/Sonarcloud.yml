@@ -1,5 +1,3 @@
-# .github/workflows/sonarcloud.yml
-
 name: SonarCloud
 
 on:
@@ -10,7 +8,7 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.commits.modified in '/backend/**'
+#    if: github.event.pull_request.commits.modified in '/backend/**'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -32,28 +30,28 @@ jobs:
             -Dsonar.exclusions='backend/**/*.test.py,backend/**/*.spec.py'
             -Dsonar.python.coverage.reportPaths=backend/.coverage
 
-  frontend:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.commits.modified in '/frontend/**'
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm install
-      - name: Run SonarCloud analysis (frontend)
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_WEB }}
-        run: |
-          sonar-scanner
-            -Dsonar.projectKey=parodontitis-web
-            -Dsonar.organization=krokante-krab
-            -Dsonar.sources=frontend
-            -Dsonar.inclusions='frontend/**'
-            -Dsonar.exclusions='frontend/**/*.test.js,frontend/**/*.spec.js'
-            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+#  frontend:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.commits.modified in '/frontend/**'
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up Node.js
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: 16
+#      - name: Install dependencies
+#        run: |
+#          cd frontend
+#          npm install
+#      - name: Run SonarCloud analysis (frontend)
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_WEB }}
+#        run: |
+#          sonar-scanner
+#            -Dsonar.projectKey=parodontitis-web
+#            -Dsonar.organization=krokante-krab
+#            -Dsonar.sources=frontend
+#            -Dsonar.inclusions='frontend/**'
+#            -Dsonar.exclusions='frontend/**/*.test.js,frontend/**/*.spec.js'
+#            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
 
