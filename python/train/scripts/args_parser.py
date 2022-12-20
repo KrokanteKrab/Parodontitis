@@ -17,7 +17,7 @@ class ArgsParser:
             if cmdargs.count("--user") > 0:
                 user_param_index = cmdargs.index("--user") + 1
                 match cmdargs[user_param_index]:
-                    case 'isa' | 'tim' | 'youri' | 'leander':
+                    case 'iza' | 'tim' | 'youri' | 'leander':
                         print(f'[*] User is: {cmdargs[user_param_index]}!')
                     case _:
                         print("[*] Param value for --user is invalid, needs to be your name in lower case.")
