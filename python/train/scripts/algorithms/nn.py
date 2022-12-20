@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Input, Dense, Normalization, Dropout
-from keras.optimizers import Adam, SGD
+from keras.optimizers import Adam, SGD, RMSprop
 from keras.losses import SparseCategoricalCrossentropy
 
 import shap
@@ -86,14 +86,16 @@ class NN:
             epochs = config.epochs
             learning_rate = config.learning_rate
             nodes = config.nodes
-            optimizer = config.optimizer
             layers = config.layers
             dropout = config.dropout
 
-            if config.optimizer == 'adam':
-                optimizer = Adam(lr=learning_rate)
-            elif config.optimizer == 'sgd':
-                optimizer = SGD(lr=learning_rate)
+            optimizers = {
+                'adam': Adam,
+                'sgd': SGD,
+                'rmsprop': RMSprop
+            }
+
+            optimizer = optimizers[config.optimizer](lr=learning_rate)
 
             model = Sequential()
 
