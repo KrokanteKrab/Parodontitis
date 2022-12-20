@@ -1,7 +1,9 @@
-name: SonarCloud
+name: Static Analysis Python API
 
 on:
   pull_request:
+    branches:
+      - 'main'
     paths:
       - 'frontend/*'
 
