@@ -12,7 +12,6 @@ RUN npm run build
 FROM nginx
 # Copy nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
-
 COPY --from=build-stage /app/build /usr/share/nginx/html
 
 EXPOSE 80
