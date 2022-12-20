@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - 'main'
+    paths:
+      - 'backend/*'
+      - 'python/scripts/*'
 
 jobs:
   build:
@@ -21,6 +24,6 @@ jobs:
       - name: Run static analysis
         run: |
           pip install sonar-scanner
-          sonar-scanner -Dsonar.projectBaseDir=./backend -Dsonar.projectKey=parodontitis-api
+          sonar-scanner -Dsonar.projectBaseDir=./backend,./python/scripts -Dsonar.projectKey=parodontitis-api
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}
