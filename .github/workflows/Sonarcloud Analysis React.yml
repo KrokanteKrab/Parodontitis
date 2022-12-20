@@ -1,4 +1,4 @@
-name: Static Analysis Python API
+name: Static Analysis React Web
 
 on:
   pull_request:
