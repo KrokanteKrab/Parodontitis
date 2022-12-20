@@ -1,32 +1,59 @@
-name: Static Analysis Python
+# .github/workflows/sonarcloud.yml
+
+name: SonarCloud
 
 on:
   pull_request:
     branches:
-      - '*'
+      - main
 
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.commits.modified contains '/backend/**'
     steps:
-    - uses: actions/checkout@v2
-    - name: Install SonarCloud CLI
-      run: |
-        apt-get update
-        apt-get install unzip
-        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
-        unzip sonar-scanner-cli-4.4.0.2170-linux.zip
-    - name: Analyze backend
-      run: |
-        sonar-scanner-4.4.0.2170-linux/bin/sonar-scanner \
-        -Dsonar.projectKey=parodontitis-api \
-        -Dsonar.organization=krokante-krab \
-        -Dsonar.sources=./backend \
-        -Dsonar.language=py
-    - name: Analyze frontend
-      run: |
-        sonar-scanner-4.4.0.2170-linux/bin/sonar-scanner \
-        -Dsonar.projectKey=parodontitis-web \
-        -Dsonar.organization=krokante-krab \
-        -Dsonar.sources=./frontend \
-        -Dsonar.language=js
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+      - name: Install dependencies
+        run: |
+          python -m pip install -r backend/requirements.txt
+      - name: Run SonarCloud analysis (backend)
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}
+        run: |
+          sonar-scanner
+            -Dsonar.projectKey=parodontitis-api
+            -Dsonar.organization=krokante-krab
+            -Dsonar.sources=backend
+            -Dsonar.inclusions='backend/**'
+            -Dsonar.exclusions='backend/**/*.test.py,backend/**/*.spec.py'
+            -Dsonar.python.coverage.reportPaths=backend/.coverage
+
+  frontend:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.commits.modified contains '/frontend/**'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+      - name: Run SonarCloud analysis (frontend)
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_WEB }}
+        run: |
+          sonar-scanner
+            -Dsonar.projectKey=parodontitis-web
+            -Dsonar.organization=krokante-krab
+            -Dsonar.sources=frontend
+            -Dsonar.inclusions='frontend/**'
+            -Dsonar.exclusions='frontend/**/*.test.js,frontend/**/*.spec.js'
+            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+
