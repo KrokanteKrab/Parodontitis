@@ -1,0 +1,32 @@
+name: Static Analysis Python
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install SonarCloud CLI
+      run: |
+        apt-get update
+        apt-get install unzip
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
+        unzip sonar-scanner-cli-4.4.0.2170-linux.zip
+    - name: Analyze backend
+      run: |
+        sonar-scanner-4.4.0.2170-linux/bin/sonar-scanner \
+        -Dsonar.projectKey=parodontitis-api \
+        -Dsonar.organization=krokante-krab \
+        -Dsonar.sources=./backend \
+        -Dsonar.language=py
+    - name: Analyze frontend
+      run: |
+        sonar-scanner-4.4.0.2170-linux/bin/sonar-scanner \
+        -Dsonar.projectKey=parodontitis-web \
+        -Dsonar.organization=krokante-krab \
+        -Dsonar.sources=./frontend \
+        -Dsonar.language=js
