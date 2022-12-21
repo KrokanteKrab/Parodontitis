@@ -1,14 +1,10 @@
-from keras.layers import Normalization
-
 import pandas as pd
-import numpy as np
-
 import wandb
-import optuna
-from optuna.integration.wandb import WeightsAndBiasesCallback
+import pickle
 
+from sklearn.preprocessing import Normalizer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 
 from dotenv import load_dotenv
@@ -76,61 +72,47 @@ class RF:
         y_train = y_train.to_numpy().flatten()
         y_test = y_test.to_numpy().flatten()
 
-        # TODO: Normalization on RF
-        # normalizer = Normalization(axis=-1)
-        # normalizer.adapt(np.array(x_train))
+        normalizer = Normalizer()
+        normalizer.fit(x_train)
+        x_train_normalized = normalizer.transform(x_train)
+        x_train_normalized = pd.DataFrame(x_train_normalized, columns=x_train.columns)
 
-        def wandb_train(trial):
+        def wandb_train():
+            # Initialize Wandb and set up a new run
             wandb.init(resume=True)
+            config = wandb.config
 
             params = {
-                "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 2, 4),
-                "min_samples_split": trial.suggest_int("min_samples_split", 2, 5, 10),
-                "max_depth": trial.suggest_int("max_depth", None, 10, 20, 30),
-                "n_estimators": trial.suggest_int("n_estimators", 10, 50, 100, 200)
+                "min_samples_leaf": int(config['min_samples_leaf']),
+                "min_samples_split": int(config['min_samples_split']),
+                "n_estimators": int(config['n_estimators']),
+                "max_features": config['max_features'],
+                "bootstrap": bool(config['bootstrap']),
+                "criterion": config['criterion'],
+                "n_jobs": int(config['n_jobs'])
             }
 
-            clf = RandomForestClassifier(**params)
-            clf.fit(x_train, y_train)
-            pred = clf.predict(x_test)
-            score = accuracy_score(y_test, pred)
+            # Define the model and the hyperparameters to tune
+            model = RandomForestClassifier()
+            model.set_params(**params)
 
-            return score
+            # Train the model
+            model.fit(x_train_normalized, y_train)
 
-            # # Create a Random Forest model
-            # model = RandomForestClassifier()
-            #
-            # # Create a HyperparameterSearchCV object and use it to fit the model
-            # grid_search = GridSearchCV(model, param_grid, verbose=2)
-            # grid_search.fit(x_train, y_train)
-            #
-            # # Evaluate the model on the test set
-            # accuracy = grid_search.score(x_test, y_test)
-            #
-            # # Log the accuracy to Wandb
-            # wandb.log({'test_accuracy': accuracy})
-            #
-            # # Save the best model to disk
-            # grid_search.best_estimator_.save(f'models/{wandb.run.id}_model.pkl')
-            #
-            # wandb.log_artifact(f'models/{wandb.run.id}_model.pkl', name=f'{wandb.run.id}_model', type='model')
+            # Evaluate the model on the test set and log the metrics
+            y_pred = model.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            precision = precision_score(y_test, y_pred)
+            recall = recall_score(y_test, y_pred)
+            wandb.log({
+                'accuracy': accuracy,
+                'precision': precision,
+                'recall': recall,
+            })
 
-        # wandb.agent(sweep_id, wandb_train, project='parodontitis', count=iterations)
-        wandb_kwargs = {
-            "project": "parodontitis"
-        }
-        wandbc = WeightsAndBiasesCallback(metric_name="accuracy", wandb_kwargs=wandb_kwargs)
+            # Save the model to a file
+            with open(f'models/{wandb.run.id}_model.pkl', 'wb') as f:
+                pickle.dump(model, f)
+            wandb.log_artifact(f'models/{wandb.run.id}_model.pkl', name=f'{wandb.run.id}_model', type='model')
 
-        study = optuna.create_study(direction="maximize")
-        study.optimize(wandb_train, n_trials=iterations, callbacks=[wandbc])
-
-        print("Number of finished trials: ", len(study.trials))
-
-        print("Best trial:")
-        trial = study.best_trial
-
-        print("  Value: ", trial.value)
-
-        print("  Params: ")
-        for key, value in trial.params.items():
-            print("    {}: {}".format(key, value))
+        wandb.agent(sweep_id, wandb_train, project='parodontitis', count=iterations)
