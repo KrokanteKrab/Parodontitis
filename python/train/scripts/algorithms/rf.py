@@ -1,27 +1,24 @@
-from sklearn.model_selection import train_test_split
-from keras.models import Sequential
-from keras.layers import Input, Dense, Normalization, Dropout
-from keras.optimizers import Adam, SGD, RMSprop
-from keras.losses import SparseCategoricalCrossentropy
-
 import pandas as pd
-import numpy as np
-
 import wandb
-from wandb.keras import WandbCallback
+import pickle
+
+from sklearn.preprocessing import Normalizer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
 
 from dotenv import load_dotenv
 import os
 
 
-class NN:
+class RF:
     def __init__(self, config, random_state=1, test_size=0.3):
         # Load environment variables from .env file
         load_dotenv()
         wandb_key = os.getenv(f"WANDB_KEY_{config['user'].upper()}")
 
         wandb.login(key=wandb_key, relogin=True)
-        sweep_id = os.getenv('NN_SWEEP_ID')
+        sweep_id = os.getenv('RF_SWEEP_ID')
 
         # Load data & Field selection
         df = pd.read_csv('../data/generated/patients-v6.csv')
@@ -72,52 +69,50 @@ class NN:
         iterations = self.nn_config['iterations']
 
         x_train, x_test, y_train, y_test = self.split_data()
+        y_train = y_train.to_numpy().flatten()
+        y_test = y_test.to_numpy().flatten()
 
-        normalizer = Normalization(axis=-1)
-        normalizer.adapt(np.array(x_train))
+        normalizer = Normalizer()
+        normalizer.fit(x_train)
+        x_train_normalized = normalizer.transform(x_train)
+        x_train_normalized = pd.DataFrame(x_train_normalized, columns=x_train.columns)
 
         def wandb_train():
+            # Initialize Wandb and set up a new run
             wandb.init(resume=True)
             config = wandb.config
 
-            batch_size = config.batch_size
-            epochs = config.epochs
-            learning_rate = config.learning_rate
-            nodes = config.nodes
-            layers = config.layers
-            dropout = config.dropout
-
-            optimizers = {
-                'adam': Adam,
-                'sgd': SGD,
-                'rmsprop': RMSprop
+            params = {
+                "min_samples_leaf": int(config['min_samples_leaf']),
+                "min_samples_split": int(config['min_samples_split']),
+                "n_estimators": int(config['n_estimators']),
+                "max_features": config['max_features'],
+                "bootstrap": bool(config['bootstrap']),
+                "criterion": config['criterion'],
+                "n_jobs": int(config['n_jobs'])
             }
 
-            optimizer = optimizers[config.optimizer](lr=learning_rate)
+            # Define the model and the hyperparameters to tune
+            model = RandomForestClassifier()
+            model.set_params(**params)
 
-            model = Sequential()
+            # Train the model
+            model.fit(x_train_normalized, y_train)
 
-            model.add(Input(shape=(x_train.shape[1],)))
-            model.add(normalizer)
+            # Evaluate the model on the test set and log the metrics
+            y_pred = model.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            precision = precision_score(y_test, y_pred)
+            recall = recall_score(y_test, y_pred)
+            wandb.log({
+                'accuracy': accuracy,
+                'precision': precision,
+                'recall': recall,
+            })
 
-            for i in range(layers):
-                model.add(Dense(nodes, activation='relu'))
-                model.add(Dropout(dropout))
-
-            model.add(Dense(2, activation='softmax'))
-
-            model.compile(
-                optimizer=optimizer,
-                loss=SparseCategoricalCrossentropy(),
-                metrics=['accuracy']
-            )
-
-            model.fit(
-                x_train, y_train, epochs=epochs, batch_size=batch_size,
-                callbacks=[WandbCallback()], validation_data=(x_test, y_test)
-            )
-
-            model.save(f'models/{wandb.run.id}_model.h5')
-            wandb.log_artifact(f'models/{wandb.run.id}_model.h5', name=f'{wandb.run.id}_model', type='model')
+            # Save the model to a file
+            with open(f'models/{wandb.run.id}_model.pkl', 'wb') as f:
+                pickle.dump(model, f)
+            wandb.log_artifact(f'models/{wandb.run.id}_model.pkl', name=f'{wandb.run.id}_model', type='model')
 
         wandb.agent(sweep_id, wandb_train, project='parodontitis', count=iterations)

@@ -47,10 +47,10 @@ class ArgsParser:
             if cmdargs.count("--iterations") > 0:
                 iterations_param_index = cmdargs.index("--iterations") + 1
                 match cmdargs[iterations_param_index]:
-                    case '5' | '10' | '15':
+                    case '5' | '10' | '15' | '100' | '500':
                         print(f'[*] Iterations is: {cmdargs[iterations_param_index]}!')
                     case _:
-                        print("[*] Param value for --algorithm is invalid, needs to be 5, 10 or 15.")
+                        print("[*] Param value for --algorithm is invalid, needs to be 5, 10, 15, 100 or 500.")
                         sys.exit()
 
                 # Set value from arg
@@ -71,5 +71,5 @@ class ArgsParser:
         print("[*] Every possible parameter:")
         print("[*] --user (your_name) (required)")
         print("[*] --algorithm (nn/rf) (default: nn)")
-        print("[*] --iterations (5/10/15) (default: 5)")
+        print("[*] --iterations (5/10/15/100/500) (default: 5)")
         sys.exit()
