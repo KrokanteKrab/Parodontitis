@@ -20,4 +20,5 @@ COPY api.py .
 EXPOSE 80
 EXPOSE 443
 
+# Start nginx
 CMD ["sh", "-c", "python api.py & nginx -g 'daemon off;'"]

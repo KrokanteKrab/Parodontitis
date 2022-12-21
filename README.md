@@ -8,5 +8,5 @@ The following installation is required to get everything working!
 
 > conda activate parodontitis
 
-> pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu117
+> pip install -r requirements.txt
 ```
