@@ -7,7 +7,7 @@ function Home() {
             <div className="container">
                 <div className="col-12 col-md-7">
                     <h1>
-                        Artificiele intelligentie + <br/>
+                        Artificiële intelligentie + <br/>
                         Mondzorg
                     </h1>
                     <p>
