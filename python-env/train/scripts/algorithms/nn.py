@@ -12,6 +12,7 @@ from wandb.keras import WandbCallback
 
 from dotenv import load_dotenv
 import os
+import sys
 
 
 class NN:
@@ -24,7 +25,11 @@ class NN:
         sweep_id = os.getenv('NN_SWEEP_ID')
 
         # Load data & Field selection
-        df = pd.read_csv('../data/generated/patients-v6.csv')
+        csv_path = '../data/synthetic-v2/data.csv'
+        if not os.path.exists(csv_path):
+            sys.exit(f'[*] Could not find csv file at: {csv_path}')
+
+        df = pd.read_csv(csv_path)
         x = df[[
             'AGE_RANGE_20',
             'AGE_RANGE_40',
@@ -32,8 +37,8 @@ class NN:
             'TREATING_PROVIDER_DENTIST',
             'TREATING_PROVIDER_FACULTY',
             'TREATING_PROVIDER_STUDENT',
-            'PROCEDURE_A',
-            'PROCEDURE_B',
+            'DDS_CODE_D4210',
+            'DDS_CODE_D4211',
             'BLEEDING_ON_PROBING',
             'NR_OF_POCKET',
             'NR_OF_FURCATION',
