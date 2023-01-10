@@ -9,9 +9,6 @@ def calculate_age(birthdate, other_date=date.today()):
 
 
 class DataParser:
-    def __int__(self):
-        pass
-
     def convert_xml_to_dataframe(self, xml_string):
         root = ETree.fromstring(xml_string)
 
@@ -95,7 +92,6 @@ class DataParser:
                     treating_provider_dentist,
                     treating_provider_faculty,
                     treating_provider_student,
-                    has_parodontitis,
                     dds_code_d4210,
                     dds_code_d4211,
                     bleeding_on_probing,
@@ -103,6 +99,7 @@ class DataParser:
                     nr_of_furcation,
                     nr_of_mobility,
                     total_loss_of_attachment_level,
+                    has_parodontitis
                 ]
                 all_items.append(patient_item)
 
@@ -119,7 +116,6 @@ class DataParser:
             'TREATING_PROVIDER_DENTIST',
             'TREATING_PROVIDER_FACULTY',
             'TREATING_PROVIDER_STUDENT',
-            'HAS_PARODONTITIS',
             'DDS_CODE_D4210',
             'DDS_CODE_D4211',
             'BLEEDING_ON_PROBING',
@@ -127,6 +123,7 @@ class DataParser:
             'NR_OF_FURCATION',
             'NR_OF_MOBILITY',
             'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
+            'HAS_PARODONTITIS'
         ])
 
         return df
