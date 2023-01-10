@@ -21,39 +21,29 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from scripts.prediction_parser import PredictionParser
-from scripts.patient_parser import PatientParser
+import sys
+
+sys.path.insert(0, '../_shared')
+from data_parser import DataParser
 
 app = Flask(__name__)
 # Solves Cross Origin Resource Sharing (CORS)
 CORS(app)
 
-# Used for validation
-EXPECTED = {
-    # TODO: Define constraints on data if needed
-}
-
-COLUMNS = [
-    # 'PATIENT_ID',
-    # 'GENDER_MALE',
-    # 'GENDER_FEMALE',
-    # 'BIRTH_DATE',
+PREDICTION_COLUMNS = [
     'AGE_RANGE_20',
     'AGE_RANGE_40',
     'AGE_RANGE_60',
-    # 'VISIT_DATE',
     'TREATING_PROVIDER_DENTIST',
     'TREATING_PROVIDER_FACULTY',
     'TREATING_PROVIDER_STUDENT',
-    'PROCEDURE_A',
-    'PROCEDURE_B',
+    'DDS_CODE_D4210',
+    'DDS_CODE_D4211',
     'BLEEDING_ON_PROBING',
     'NR_OF_POCKET',
     'NR_OF_FURCATION',
     'NR_OF_MOBILITY',
-    'TOTAL_LOSS_OF_ATTACHMENT_LEVEL',
-    # 'NOICE_MODIFIED',
-    # 'STUDENT_ERROR'
+    'TOTAL_LOSS_OF_ATTACHMENT_LEVEL'
 ]
 RANDOM_STATE = 1
 
@@ -61,10 +51,10 @@ RANDOM_STATE = 1
 # This method is used for loading the needed data.
 def load_data():
     # Fetch data from csv file.
-    data = pd.read_csv('data/patients-v6.csv')
+    data = pd.read_csv('../_shared/data/synthetic-v2/data.csv')
 
     # Only take the needed column(s)
-    X = data[COLUMNS]
+    X = data[PREDICTION_COLUMNS]
 
     y = data[[
         'HAS_PARODONTITIS'
@@ -77,8 +67,9 @@ def load_data():
 
 # The setup method is used for setting everything up that we need to work with
 def setup():
+    # TODO: Get best model after training
     # Load neural network
-    _model = load_model("./model/model-best-v2.h5")
+    _model = load_model("./model/model-best-synthetic-v2.h5")
 
     # Load training data
     (X_train, _), _ = load_data()
@@ -106,77 +97,70 @@ def root():
 def predict():
     epd_xml = request.files['epd_xml']
     read_epd = epd_xml.read()
-    prediction_parser = PredictionParser()
-    prediction_data = prediction_parser.convert_xml_to_dataframe(read_epd)
-    patient_parser = PatientParser()
-    patient_data = patient_parser.convert_xml_to_dataframe(read_epd)
-    errors = []
+    dataParser = DataParser()
+    df = dataParser.convert_xml_to_dataframe(read_epd)
 
-    if len(errors) < 1:
-        # Predict
-        x = np.zeros((len(prediction_data), len(COLUMNS)))
+    df_prediction = df[PREDICTION_COLUMNS]
 
-        for i in range(len(prediction_data)):
-            for j in range(len(prediction_data.columns)):
-                x[i, j] = prediction_data[COLUMNS[j]][i]
+    # Predict
+    x = np.zeros((len(df_prediction), len(PREDICTION_COLUMNS)))
 
-        # Prediction
-        predictions = model.predict(x)
-        prediction_result = []
+    for i in range(len(df_prediction)):
+        for j in range(len(PREDICTION_COLUMNS)):
+            x[i, j] = df_prediction[PREDICTION_COLUMNS[j]][i]
 
-        for i in range(len(predictions)):
-            prediction = {
-                "has-not-parodontitis": float(predictions[i][0]),
-                "has-parodontitis": float(predictions[i][1]),
-                "show-shap": 0,
-                "values": {
-                    "AGE_RANGE_20": x[i][0],
-                    "AGE_RANGE_40": x[i][1],
-                    "AGE_RANGE_60": x[i][2],
-                    "TREATING_PROVIDER_DENTIST": x[i][3],
-                    "TREATING_PROVIDER_FACULTY": x[i][4],
-                    "TREATING_PROVIDER_STUDENT": x[i][5],
-                    "PROCEDURE_A": x[i][6],
-                    "PROCEDURE_B": x[i][7],
-                    "BLEEDING_ON_PROBING": x[i][8],
-                    "NR_OF_POCKET": x[i][9],
-                    "NR_OF_FURCATION": x[i][10],
-                    "NR_OF_MOBILITY": x[i][11],
-                    "TOTAL_LOSS_OF_ATTACHMENT_LEVEL": x[i][12]
-                }
+    # Prediction
+    predictions = model.predict(x)
+    prediction_result = []
+
+    for i in range(len(predictions)):
+        prediction = {
+            "has-not-parodontitis": float(predictions[i][0]),
+            "has-parodontitis": float(predictions[i][1]),
+            "show-shap": 0,
+            "values": {
+                "AGE_RANGE_20": x[i][0],
+                "AGE_RANGE_40": x[i][1],
+                "AGE_RANGE_60": x[i][2],
+                "TREATING_PROVIDER_DENTIST": x[i][3],
+                "TREATING_PROVIDER_FACULTY": x[i][4],
+                "TREATING_PROVIDER_STUDENT": x[i][5],
+                "DDS_CODE_D4210": x[i][6],
+                "DDS_CODE_D4211": x[i][7],
+                "BLEEDING_ON_PROBING": x[i][8],
+                "NR_OF_POCKET": x[i][9],
+                "NR_OF_FURCATION": x[i][10],
+                "NR_OF_MOBILITY": x[i][11],
+                "TOTAL_LOSS_OF_ATTACHMENT_LEVEL": x[i][12]
             }
-
-            prediction_result.append(prediction)
-
-        # Patient
-        patient_result = {
-            "PATIENT_ID": patient_data['PATIENT_ID'][0],
-            "GENDER_MALE": int(patient_data['GENDER_MALE'][0]),
-            "GENDER_FEMALE": int(patient_data['GENDER_FEMALE'][0]),
-            "BIRTH_DATE": patient_data['BIRTH_DATE'][0],
-            "AGE": int(patient_data['AGE'][0])
         }
 
-        visit_result = []
-        for i in range(len(patient_data)):
-            visit = {
-                "VISIT_DATE": patient_data['VISIT_DATE'][i],
-                "VISIT_AGE": int(patient_data['VISIT_AGE'][i])
-            }
+        prediction_result.append(prediction)
 
-            visit_result.append(visit)
+    # Patient
+    patient_result = {
+        "PATIENT_ID": df['PATIENT_ID'][0],
+        "GENDER_MALE": int(df['GENDER_MALE'][0]),
+        "GENDER_FEMALE": int(df['GENDER_FEMALE'][0]),
+        "BIRTH_DATE": df['BIRTH_DATE'][0]
+    }
 
-        # Request response
-        response = {
-            "id": str(uuid.uuid4()),
-            "errors": errors,
-            "predictions": prediction_result,
-            "patient": patient_result,
-            "visits": visit_result
+    visit_result = []
+    for i in range(len(df)):
+        visit = {
+            "VISIT_DATE": df['VISIT_DATE'][i],
+            "VISIT_AGE": int(df['VISIT_AGE'][i])
         }
-    else:
-        # Return errors
-        response = {"id": str(uuid.uuid4()), "errors": errors}
+
+        visit_result.append(visit)
+
+    # Request response
+    response = {
+        "id": str(uuid.uuid4()),
+        "predictions": prediction_result,
+        "patient": patient_result,
+        "visits": visit_result
+    }
 
     return jsonify(response)
 
@@ -184,53 +168,46 @@ def predict():
 @app.route('/api/shap-img', methods=['POST'])
 def shap_img():
     content = request.json
-    errors = []
 
-    if len(errors) < 1:
-        # Predict
-        x = np.zeros((1, 13))
+    # Predict
+    x = np.zeros((1, 13))
 
-        for i in range(len(COLUMNS)):
-            x[0, i] = content[COLUMNS[i]]
+    for i in range(len(PREDICTION_COLUMNS)):
+        x[0, i] = content[PREDICTION_COLUMNS[i]]
 
-        # Prediction
-        prediction = model.predict(x)
-        prediction = {
-            "has-not-parodontitis": float(prediction[0][0]),
-            "has-parodontitis": float(prediction[0][1])
-        }
+    # Prediction
+    prediction = model.predict(x)
+    prediction = {
+        "has-not-parodontitis": float(prediction[0][0]),
+        "has-parodontitis": float(prediction[0][1])
+    }
 
-        aliases = string.ascii_uppercase[:len(COLUMNS)]
-        shap_values = shap_explainer.shap_values(x)
-        if prediction["has-not-parodontitis"] > prediction["has-parodontitis"]:
-            shap.force_plot(
-                shap_explainer.expected_value[0], shap_values[0], x, matplotlib=True, show=False,
-                plot_cmap=['#77dd77', '#f99191'], feature_names=aliases
-            )
-        else:
-            shap.force_plot(
-                shap_explainer.expected_value[1], shap_values[1], x, matplotlib=True, show=False,
-                plot_cmap=['#77dd77', '#f99191'], feature_names=aliases
-            )
-
-        # Encode shap img into base64,
-        buf = BytesIO()
-        plt.savefig(buf, format='png', bbox_inches="tight")
-        shap_img = base64.b64encode(buf.getvalue()).decode("utf-8").replace("\n", "")
-
-        aliases_with_column_name = dict(zip(COLUMNS, aliases))
-
-        # Request response
-        response = {
-            "id": str(uuid.uuid4()),
-            "shap-img": shap_img,
-            "feature_aliases": aliases_with_column_name,
-            "errors": errors,
-        }
-
+    aliases = string.ascii_uppercase[:len(PREDICTION_COLUMNS)]
+    shap_values = shap_explainer.shap_values(x)
+    if prediction["has-not-parodontitis"] > prediction["has-parodontitis"]:
+        shap.force_plot(
+            shap_explainer.expected_value[0], shap_values[0], x, matplotlib=True, show=False,
+            plot_cmap=['#77dd77', '#f99191'], feature_names=aliases
+        )
     else:
-        # Return errors
-        response = {"id": str(uuid.uuid4()), "errors": errors}
+        shap.force_plot(
+            shap_explainer.expected_value[1], shap_values[1], x, matplotlib=True, show=False,
+            plot_cmap=['#77dd77', '#f99191'], feature_names=aliases
+        )
+
+    # Encode shap img into base64,
+    buf = BytesIO()
+    plt.savefig(buf, format='png', bbox_inches="tight")
+    shap_img = base64.b64encode(buf.getvalue()).decode("utf-8").replace("\n", "")
+
+    aliases_with_column_name = dict(zip(PREDICTION_COLUMNS, aliases))
+
+    # Request response
+    response = {
+        "id": str(uuid.uuid4()),
+        "shap-img": shap_img,
+        "feature_aliases": aliases_with_column_name
+    }
 
     return jsonify(response)
 

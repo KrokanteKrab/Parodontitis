@@ -19,7 +19,7 @@ class RF:
         wandb_key = os.getenv(f"WANDB_KEY_{config['user'].upper()}")
 
         # Load data & Field selection
-        csv_path = '../data/synthetic-v2/data.csv'
+        csv_path = '../_shared/data/synthetic-v2/data.csv'
         if not os.path.exists(csv_path):
             sys.exit(f'[*] Could not find csv file at: {csv_path}')
 

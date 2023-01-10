@@ -30,18 +30,9 @@
                     1
                 </totalLossOfAttachmentLevel>
             </periodontalChart>
-            <procedures>
-                <procedure>
-                    <cptCode>
-                        A
-                    </cptCode>
-                </procedure>
-                <procedure>
-                    <cptCode>
-                        B
-                    </cptCode>
-                </procedure>
-            </procedures>
+            <dentalDiagnosis>
+                <DDSCode>D4211</DDSCode>
+            </dentalDiagnosis>
         </medicalVisit>
         <medicalVisit>
             <date>03-10-2012</date>
@@ -63,18 +54,9 @@
                     2
                 </totalLossOfAttachmentLevel>
             </periodontalChart>
-            <procedures>
-                <procedure>
-                    <cptCode>
-                        A
-                    </cptCode>
-                </procedure>
-                <procedure>
-                    <cptCode>
-                        B
-                    </cptCode>
-                </procedure>
-            </procedures>
+            <dentalDiagnosis>
+                <DDSCode>D4210</DDSCode>
+            </dentalDiagnosis>
         </medicalVisit>
     </patient>
 </root>
