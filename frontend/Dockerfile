@@ -2,7 +2,7 @@ FROM node:16.10.0-alpine as build-stage
 
 # Enviroment variables
 ARG BACKEND_URL
-ENV REACT_APP_BACKEND_URL=$BACKEND_URL
+ENV REACT_APP_API_URL=$BACKEND_URL
 
 WORKDIR /app
 COPY . .

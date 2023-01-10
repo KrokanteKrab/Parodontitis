@@ -12,7 +12,7 @@ services:
     build:
       context: ./frontend
       args:
-        BACKEND_URL: ${REACT_APP_BACKEND_URL}
+        BACKEND_URL: ${REACT_APP_API_URL}
     ports:
       - "80:80"
       - "443:443"
