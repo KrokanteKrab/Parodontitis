@@ -18,9 +18,6 @@ class RF:
         load_dotenv()
         wandb_key = os.getenv(f"WANDB_KEY_{config['user'].upper()}")
 
-        wandb.login(key=wandb_key, relogin=True)
-        sweep_id = os.getenv('RF_SWEEP_ID')
-
         # Load data & Field selection
         csv_path = '../data/synthetic-v2/data.csv'
         if not os.path.exists(csv_path):
@@ -45,6 +42,9 @@ class RF:
         y = df[[
             'HAS_PARODONTITIS'
         ]]
+
+        wandb.login(key=wandb_key, relogin=True)
+        sweep_id = os.getenv('RF_SWEEP_ID')
 
         self.nn_config = {
             'sweep_id': sweep_id,
