@@ -39,7 +39,7 @@ jobs:
           tags: ghcr.io/${{ env.REPO }}-web:${{ github.sha }}
           build-args: |
             BACKEND_URL: "https://parodontitis-api.azurewebsites.net"
-          file: ./Dockerfile
+          file: ./frontend/Dockerfile
 
   deploy:
     permissions:
