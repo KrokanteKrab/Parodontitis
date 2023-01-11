@@ -34,9 +34,12 @@ jobs:
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
         with:
+          context: ./frontend/
           push: true
           tags: ghcr.io/${{ env.REPO }}-web:${{ github.sha }}
-          file: ./frontend/Dockerfile
+          build-args: |
+            BACKEND_URL: "https://parodontitis-api.azurewebsites.net"
+          file: ./Dockerfile
 
   deploy:
     permissions:
