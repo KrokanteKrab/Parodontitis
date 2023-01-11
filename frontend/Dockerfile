@@ -1,18 +1,18 @@
-FROM node:16.7.0-alpine as build-stage
+FROM node:16.10.0-alpine as build-stage
+
+# Enviroment variables
+ARG BACKEND_URL
+ENV REACT_APP_API_URL=$BACKEND_URL
 
 WORKDIR /app
-COPY frontend/package.json ./
+COPY . .
 
 RUN npm install
-ENV REACT_APP_API_URL https://parodontitis-api.azurewebsites.net
-
-COPY frontend/. .
 RUN npm run build
 
 FROM nginx:1.19.0-alpine
-COPY frontend/nginx.conf /etc/nginx/nginx.conf
+COPY _docker/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build-stage /app/build /usr/share/nginx/html
-
 
 EXPOSE 80
 EXPOSE 443
