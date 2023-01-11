@@ -37,7 +37,7 @@ jobs:
           context: ./python-env/
           push: true
           tags: ghcr.io/${{ env.REPO }}-api:${{ github.sha }}
-          file: ./backend/Dockerfile
+          file: ./python-env/backend/Dockerfile
 
   deploy:
     permissions:
