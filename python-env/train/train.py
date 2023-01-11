@@ -1,6 +1,7 @@
 from scripts.args_parser import ArgsParser
 from scripts.algorithms.nn import NN
 from scripts.algorithms.rf import RF
+from scripts.algorithms._shared.base_algorithm import BaseAlgorithm
 
 print("[*] ------------------------------------------")
 print("[*] Welcome by parodontitis!")
@@ -18,4 +19,4 @@ algorithms = {
     'rf': RF
 }
 
-algorithms[algorithm](config).train()
+algorithms[algorithm]().train(base=BaseAlgorithm(config))

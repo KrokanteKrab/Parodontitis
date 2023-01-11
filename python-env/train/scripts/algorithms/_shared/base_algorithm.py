@@ -1,20 +1,12 @@
-from sklearn.model_selection import train_test_split
-from keras.models import Sequential
-from keras.layers import Input, Dense, Normalization, Dropout
-from keras.optimizers import Adam, SGD, RMSprop
-from keras.losses import SparseCategoricalCrossentropy
-
-import pandas as pd
-import numpy as np
-
-import wandb
-from wandb.keras import WandbCallback
-
-from dotenv import load_dotenv
 import os
 import sys
+import pandas as pd
+import wandb
+from dotenv import load_dotenv
+from sklearn.model_selection import train_test_split
 
-class Init:
+
+class BaseAlgorithm:
     def __init__(self, config, random_state=1, test_size=0.3):
         # Load environment variables from .env file
         load_dotenv()
@@ -58,3 +50,18 @@ class Init:
                 'y': y
             }
         }
+
+    def get_config(self):
+        return self.config
+
+    def split_data(self):
+        random_state = self.config['random_state']
+        test_size = self.config['test_size']
+        x = self.config['data']['x']
+        y = self.config['data']['y']
+
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=test_size, stratify=y, random_state=random_state
+        )
+
+        return x_train, x_test, y_train, y_test
