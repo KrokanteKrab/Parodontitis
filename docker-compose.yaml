@@ -10,7 +10,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend/
       args:
         BACKEND_URL: ${REACT_APP_API_URL}
     ports:
