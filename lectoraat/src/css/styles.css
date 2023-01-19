@@ -72,3 +72,8 @@ video {
     border-radius: 20px;
     box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
 }
+
+p img {
+    display: block;
+    margin: 20px auto 0 auto;
+}
