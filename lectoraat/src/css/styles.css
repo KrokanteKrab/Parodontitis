@@ -52,3 +52,16 @@ header div img {
     margin-right: -15px;
     margin-top: -15px;
 }
+
+main div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main div img {
+    width: 200px;
+    height: 60px;
+    text-align: center;
+    margin: 20px;
+}
