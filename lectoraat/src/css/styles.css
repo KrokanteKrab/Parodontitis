@@ -20,6 +20,9 @@ main {
 }
 
 header, main {
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
     border-radius: 20px;
     padding: 25px;
     background: #fff;
